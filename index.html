@@ -43,7 +43,7 @@ footer{text-align:center;color:var(--mu);font-size:12px;padding:16px}
 </section>
 <section id="v2" class="hide">
  <div id="lg" class="card"><h2>የመምህር መግቢያ</h2>
-  <label>የይለፍ ቁጥር (PIN)</label><input id="pin" type="password" inputmode="numeric" placeholder="መጀመሪያ: 1234">
+  <label>ኢሜይል</label><input id="em" type="email" autocomplete="username"><label>የይለፍ ቃል</label><input id="pin" type="password" autocomplete="current-password">
   <button class="btn" onclick="login()">ግባ</button><div id="lm" class="msg"></div></div>
  <div id="tp" class="hide">
   <div class="card"><h2 id="ft">አዲስ ተማሪ ጨምር</h2>
@@ -61,9 +61,26 @@ footer{text-align:center;color:var(--mu);font-size:12px;padding:16px}
    <button class="btn" onclick="save()">አስቀምጥ</button>
    <button class="btn g" onclick="clearForm()">አዲስ</button><div id="fm" class="msg"></div></div>
   <div class="card"><h2>የተማሪዎች ዝርዝር</h2><div class="tw"><table id="lt"></table></div></div>
+  <div class="card"><h2>ትምህርቶች (Subjects)</h2>
+   <div class="tw"><table id="sl"></table></div>
+   <div class="grid"><div><label>የትምህርት ስም</label><input id="ns" placeholder="ለምሳሌ Information Technology"></div>
+   <div><label>ከፍተኛ ውጤት</label><input id="nm" type="number" inputmode="numeric" value="100"></div></div>
+   <button class="btn" onclick="addSub()">ትምህርት ጨምር</button><div id="sm" class="msg"></div></div>
+  <div class="card"><h2>📋 Marklist (የውጤት መመዝገቢያ)</h2>
+   <div class="grid">
+    <div><label>የመምህር ስም</label><input id="m_t" value="Denekew Bamlaku"></div>
+    <div><label>ትምህርት</label><select id="m_s"></select></div>
+    <div><label>ክፍል (Grade)</label><input id="m_g" list="gl" value="Grade 8"><datalist id="gl"></datalist></div>
+    <div><label>ሴሚስተር</label><select id="m_q"><option value="1">Semester I</option><option value="2" selected>Semester II</option></select></div>
+   </div>
+   <button class="btn" onclick="mlOpen()">ማርክሊስት ክፈት</button>
+   <div class="tw"><table id="mt"></table></div>
+   <button class="btn hide" id="mb" onclick="mlSave()">ውጤት አስቀምጥ</button><div id="mm" class="msg"></div>
+   <h2 style="margin-top:14px">ተማሪዎችን በአንድ ጊዜ ጨምር</h2>
+   <textarea id="bk" rows="4" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit" placeholder="በየመስመሩ: የምዝገባ ቁጥር, ስም, M ወይም F"></textarea>
+   <button class="btn g" onclick="bulk()">ጨምር</button></div>
   <div class="card"><h2>ቅንብር</h2>
-   <label>አዲስ PIN</label><input id="np" type="password" inputmode="numeric">
-   <button class="btn g" onclick="chPin()">PIN ቀይር</button>
+   <button class="btn g" onclick="chPin()">የይለፍ ቃል ቀይር (ኢሜይል ይላካል)</button>
    <button class="btn g" onclick="exp()">ዳታ ላክ (Backup)</button>
    <button class="btn g" onclick="document.getElementById('imp').click()">ዳታ አስገባ</button>
    <input id="imp" type="file" accept=".json" class="hide" onchange="imp(this)">
@@ -73,10 +90,13 @@ footer{text-align:center;color:var(--mu);font-size:12px;padding:16px}
 </main>
 <footer>Developed by Denekew Bamlaku · DB technologies</footer>
 <script>
-var SUB=[["en","English",60],["ci","Citizenship",60],["ma","Mathematics",40],["ss","Social Studies",60],["gs","General Science",60],["am","Amharic as Mother Tongue",60]];
+var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
 function load(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){D=null}
- if(!D||!D.s){D={pin:"1234",s:[{id:"0082347",name:"MOHAMMED ABDELLA SEMAN",g:"Male",gr:"Grade 8",y:"2018",z:"Gurage",w:"WOLKITE",a:{en:49,ci:53,ma:30,ss:54,gs:51,am:50}}]}}}
+ if(!D||!D.s){D={pin:"1234",s:[{id:"0082347",name:"MOHAMMED ABDELLA SEMAN",g:"Male",gr:"Grade 8",y:"2018",z:"Gurage",w:"WOLKITE",a:{en:82,ci:88,ma:75,ss:90,gs:85,am:83}}],v:2}}
+ norm()}
+function norm(){if(D.v!==2){var OM={en:60,ci:60,ma:40,ss:60,gs:60,am:60};D.s.forEach(function(x){for(var k in OM){if(x.a[k]!=null)x.a[k]=Math.round(x.a[k]/OM[k]*100)}});D.v=2}
+ if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub}
 function persist(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
 load();
 function $(i){return document.getElementById(i)}
@@ -98,7 +118,19 @@ function card(s){var c=calc(s),ok=c.avg>=50;
 function login(){if($("pin").value===D.pin){$("lg").classList.add("hide");$("tp").classList.remove("hide");$("lm").textContent="";draw()}else $("lm").textContent="PIN ትክክል አይደለም።"}
 function out(){$("tp").classList.add("hide");$("lg").classList.remove("hide");$("pin").value=""}
 function chPin(){var p=$("np").value.trim();if(p.length<4){alert("ቢያንስ 4 ቁጥር ያስገቡ");return}D.pin=p;persist();$("np").value="";alert("PIN ተቀይሯል")}
-$("subs").innerHTML=SUB.map(function(x){return '<div><label>'+x[1]+' (/'+x[2]+')</label><input type="number" min="0" max="'+x[2]+'" id="s_'+x[0]+'"></div>'}).join("");
+function renderSubs(){var old={};SUB.forEach(function(x){var e=$("s_"+x[0]);if(e)old[x[0]]=e.value});
+ $("subs").innerHTML=SUB.map(function(x){return '<div><label>'+esc(x[1])+' (/'+x[2]+')</label><input type="number" min="0" max="'+x[2]+'" id="s_'+x[0]+'"></div>'}).join("");
+ SUB.forEach(function(x){if(old[x[0]]!=null)$("s_"+x[0]).value=old[x[0]]});
+ $("sl").innerHTML=SUB.map(function(x,i){return '<tr><td>'+esc(x[1])+'</td><td>/ '+x[2]+'</td><td><button class="btn r" style="margin:0;padding:4px 8px" data-x="'+i+'">ሰርዝ</button></td></tr>'}).join("")}
+function addSub(){var n=$("ns").value.trim(),m=+$("nm").value||100;
+ if(!n){$("sm").textContent="የትምህርቱን ስም ያስገቡ።";return}
+ if(m<1||m>1000){$("sm").textContent="ከፍተኛ ውጤት ከ1 እስከ 1000።";return}
+ if(SUB.some(function(x){return x[1].toLowerCase()===n.toLowerCase()})){$("sm").textContent="ይህ ትምህርት ቀድሞ አለ።";return}
+ SUB.push(["x"+Date.now().toString(36),n,m]);persist();renderSubs();$("ns").value="";$("nm").value="100";$("sm").textContent="✓ ትምህርት ተጨምሯል";draw()}
+$("sl").onclick=function(e){var i=e.target.getAttribute("data-x");if(i===null)return;
+ if(SUB.length<2){$("sm").textContent="ቢያንስ አንድ ትምህርት መኖር አለበት።";return}
+ if(confirm(SUB[i][1]+" ይሰረዝ? የተማሪዎች ውጤት ስሌት ይቀየራል።")){SUB.splice(+i,1);persist();renderSubs();draw();$("sm").textContent=""}};
+renderSubs();
 var edit=null;
 function clearForm(){edit=null;["name","id"].forEach(function(k){$("f_"+k).value=""});SUB.forEach(function(x){$("s_"+x[0]).value=""});$("ft").textContent="አዲስ ተማሪ ጨምር";$("fm").textContent=""}
 function save(){var id=$("f_id").value.trim(),nm=$("f_name").value.trim().toUpperCase();
@@ -111,9 +143,68 @@ function save(){var id=$("f_id").value.trim(),nm=$("f_name").value.trim().toUppe
 function draw(){var L=D.s.slice().sort(function(a,b){return calc(b).total-calc(a).total});
  $("lt").innerHTML='<tr><th>#</th><th>ስም</th><th>ቁጥር</th><th>አማካይ</th><th></th></tr>'+L.map(function(s,i){return '<tr><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.id)+'</td><td>'+r2(calc(s).avg)+'</td><td><button class="btn g" style="margin:0;padding:4px 8px" data-e="'+esc(s.id)+'">አርም</button> <button class="btn r" style="margin:0;padding:4px 8px" data-d="'+esc(s.id)+'">ሰርዝ</button></td></tr>'}).join("")}
 $("lt").onclick=function(e){var t=e.target,id=t.getAttribute("data-e"),dl=t.getAttribute("data-d");
- if(id){var s=D.s.filter(function(x){return x.id===id})[0];edit=id;$("f_name").value=s.name;$("f_id").value=s.id;$("f_g").value=s.g;$("f_gr").value=s.gr;$("f_y").value=s.y;$("f_z").value=s.z;$("f_w").value=s.w;SUB.forEach(function(x){$("s_"+x[0]).value=s.a[x[0]]});$("ft").textContent="ተማሪ አርም";scrollTo(0,0)}
+ if(id){var s=D.s.filter(function(x){return x.id===id})[0];edit=id;$("f_name").value=s.name;$("f_id").value=s.id;$("f_g").value=s.g;$("f_gr").value=s.gr;$("f_y").value=s.y;$("f_z").value=s.z;$("f_w").value=s.w;SUB.forEach(function(x){$("s_"+x[0]).value=s.a[x[0]]==null?"":s.a[x[0]]});$("ft").textContent="ተማሪ አርም";scrollTo(0,0)}
  if(dl&&confirm("ይሰረዝ?")){D.s=D.s.filter(function(x){return x.id!==dl});persist();draw()}};
 function exp(){var b=new Blob([JSON.stringify(D)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="nexus-results.json";a.click()}
-function imp(el){var f=el.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.s){D=d;persist();draw();alert("ተሳክቷል")}}catch(e){alert("ፋይሉ ልክ አይደለም")}};r.readAsText(f)}
+function imp(el){var f=el.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.s){D=d;norm();persist();renderSubs();draw();alert("ተሳክቷል")}}catch(e){alert("ፋይሉ ልክ አይደለም")}};r.readAsText(f)}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
-</script></body></html>
+</script><script>
+var MC=[["w1","Work Sht 1",5],["t1","Test 1",10],["as","Asst",10],["mi","Mid",20],["w2","Work Sht 2",5],["t2","Test 2",10],["qu","Qus",5],["eb","Ex. B'k",10]];
+function mlFill(){var c=$("m_s").value;$("m_s").innerHTML=SUB.map(function(x){return '<option value="'+x[0]+'">'+esc(x[1])+'</option>'}).join("");if(c)$("m_s").value=c;
+ var g={};D.s.forEach(function(x){g[x.gr]=1});$("gl").innerHTML=Object.keys(g).map(function(x){return '<option value="'+esc(x)+'">'}).join("")}
+var rs0=renderSubs;renderSubs=function(){rs0();mlFill()};
+function mlCalc(){var rows=$("mt").querySelectorAll("tr[data-i]");for(var i=0;i<rows.length;i++){var st=0,fe=0;
+ rows[i].querySelectorAll("input").forEach(function(e){var v=+e.value||0;if(e.dataset.k==="fe")fe=v;else st+=v});
+ rows[i].querySelector(".st").textContent=st;rows[i].querySelector(".tt").textContent=st+fe}}
+function mlOpen(){var g=$("m_g").value.trim(),k=$("m_s").value+"_"+$("m_q").value,L=D.s.filter(function(x){return x.gr===g});
+ if(!L.length){$("mt").innerHTML="";$("mb").classList.add("hide");$("mm").textContent="በዚህ ክፍል ተማሪ የለም። ከታች ጨምር።";return}
+ var inp=function(c,m){return '<td><input type="number" min="0" max="'+c[2]+'" data-k="'+c[0]+'" value="'+(m[c[0]]==null?"":m[c[0]])+'" style="width:56px;padding:4px"></td>'};
+ $("mt").innerHTML='<tr><th>No</th><th>Name</th><th>Sex</th>'+MC.map(function(c){return '<th>'+c[1]+'<br>('+c[2]+')</th>'}).join("")+'<th>Sub total<br>(75)</th><th>Final<br>(25)</th><th>Total<br>(100)</th></tr>'+
+ L.map(function(s,i){var m=(s.ml&&s.ml[k])||{};return '<tr data-i="'+esc(s.id)+'"><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+(s.g==="Male"?"M":"F")+'</td>'+MC.map(function(c){return inp(c,m)}).join("")+'<td class="st"></td>'+inp(["fe","",25],m)+'<td class="tt"></td></tr>'}).join("");
+ $("mt").oninput=function(e){var t=e.target;if(t.value!==""&&+t.value>+t.max)t.value=t.max;if(+t.value<0)t.value=0;mlCalc()};
+ $("mb").classList.remove("hide");$("mm").textContent="";mlCalc()}
+function mlSave(){var k=$("m_s").value+"_"+$("m_q").value,sx=SUB.filter(function(x){return x[0]===$("m_s").value})[0];if(!sx)return;
+ $("mt").querySelectorAll("tr[data-i]").forEach(function(r){var s=D.s.filter(function(x){return x.id===r.dataset.i})[0],m={},tot=0;if(!s)return;
+  r.querySelectorAll("input").forEach(function(e){if(e.value!==""){m[e.dataset.k]=+e.value;tot+=+e.value}});
+  s.ml=s.ml||{};s.ml[k]=m;s.a[sx[0]]=Math.round(tot/100*sx[2])});
+ persist();draw();$("mm").textContent="✓ ማርክሊስቱ ተቀምጧል — ድምሩ በተማሪ ውጤት ውስጥ ተመዝግቧል"}
+function bulk(){var g=$("m_g").value.trim(),n=0;
+ $("bk").value.split("\n").forEach(function(l){var p=l.split(/[,\t]/).map(function(x){return x.trim()});if(p.length<2||!p[0]||!p[1]||D.s.some(function(x){return x.id===p[0]}))return;
+  D.s.push({id:p[0],name:p[1].toUpperCase(),g:/^f/i.test(p[2]||"")?"Female":"Male",gr:g,y:$("f_y").value,z:$("f_z").value,w:$("f_w").value,a:{}});n++});
+ if(n){persist();draw();mlFill()}$("bk").value="";$("mm").textContent=n+" ተማሪ ተጨመረ"}
+mlFill();
+</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,getDocs,collection,writeBatch}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+// ↓↓ ከ Firebase Console ኮፒ አድርገህ እነዚህን ሁለት እሴቶች ተካ ↓↓
+var app=initializeApp({apiKey:"PASTE_API_KEY",authDomain:"nexus-academy-b4efc.firebaseapp.com",projectId:"nexus-academy-b4efc",appId:"PASTE_APP_ID"});
+var auth=getAuth(app),db=getFirestore(app),ids=new Set(),pct0=window.pct,_t;
+window.pct=function(s){return s.pc!=null?s.pc:pct0(s)};
+var toSub=function(c){return c.sub.map(function(o){return[o.k,o.n,o.m]})};
+async function syncAll(){var b=writeBatch(db);
+ D.s.forEach(function(s){s.pc=pct0(s);b.set(doc(db,"students",s.id),s)});
+ ids.forEach(function(i){if(!D.s.some(function(x){return x.id===i}))b.delete(doc(db,"students",i))});
+ b.set(doc(db,"config","subjects"),{sub:D.sub.map(function(x){return{k:x[0],n:x[1],m:x[2]}})});
+ await b.commit();ids=new Set(D.s.map(function(x){return x.id}))}
+window.persist=function(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}
+ if(auth.currentUser){clearTimeout(_t);_t=setTimeout(function(){syncAll().catch(function(e){alert("ዳታቤዝ ማስቀመጥ አልተሳካም: "+e.code)})},600)}};
+window.look=async function(){var q=$("rq").value.trim();$("rm").textContent="";$("res").innerHTML="";if(!q)return;
+ try{var r=await Promise.all([getDoc(doc(db,"students",q)),getDoc(doc(db,"config","subjects"))]);
+  if(!r[0].exists()){$("rm").textContent="ይህ የምዝገባ ቁጥር አልተገኘም።";return}
+  var keep=SUB;if(r[1].exists())SUB=toSub(r[1].data());
+  try{$("res").innerHTML=card(r[0].data())}finally{SUB=keep}}
+ catch(e){$("rm").textContent="ግንኙነት አልተሳካም። ኢንተርኔት ያረጋግጡ።"}};
+window.login=async function(){$("lm").textContent="";
+ try{await signInWithEmailAndPassword(auth,$("em").value.trim(),$("pin").value)}
+ catch(e){$("lm").textContent="ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም።";return}
+ try{var ss=await getDocs(collection(db,"students")),cf=await getDoc(doc(db,"config","subjects"));
+  if(ss.empty&&D.s.length&&confirm("ዳታቤዙ ባዶ ነው። በዚህ ስልክ ላይ ያሉ "+D.s.length+" ተማሪዎች ወደ ዳታቤዝ ይጫኑ?")){ids=new Set();await syncAll()}
+  else{D={s:ss.docs.map(function(d){return d.data()}),sub:cf.exists()?toSub(cf.data()):null,v:2};norm();ids=new Set(D.s.map(function(x){return x.id}))}
+  renderSubs();$("lg").classList.add("hide");$("tp").classList.remove("hide");draw()}
+ catch(e){$("lm").textContent="ዳታ ማንበብ አልተሳካም: "+e.code}};
+var out0=window.out;window.out=function(){out0();signOut(auth)};
+window.chPin=function(){sendPasswordResetEmail(auth,auth.currentUser.email).then(function(){alert("የይለፍ ቃል መቀየሪያ ኢሜይል ተልኳል")}).catch(function(e){alert(e.code)})};
+</script>
+</body></html>
