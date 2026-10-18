@@ -179,7 +179,7 @@ import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-ap
 import{getAuth,signInWithEmailAndPassword,signOut,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,getDocs,collection,writeBatch}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 // ↓↓ ከ Firebase Console ኮፒ አድርገህ እነዚህን ሁለት እሴቶች ተካ ↓↓
-var app=initializeApp({apiKey:"PASTE_API_KEY",authDomain:"nexus-academy-b4efc.firebaseapp.com",projectId:"nexus-academy-b4efc",appId:"PASTE_APP_ID"});
+var app=initializeApp({apiKey:"AIzaSyAqle_Bp56Im69br-0cPLa1HVZIPNgsD2Y",authDomain:"nexus-academy-b4efc.firebaseapp.com",projectId:"nexus-academy-b4efc",storageBucket:"nexus-academy-b4efc.firebasestorage.app",messagingSenderId:"1056627396241",appId:"1:1056627396241:web:efaeadb54080f45390f930"});
 var auth=getAuth(app),db=getFirestore(app),ids=new Set(),pct0=window.pct,_t;
 window.pct=function(s){return s.pc!=null?s.pc:pct0(s)};
 var toSub=function(c){return c.sub.map(function(o){return[o.k,o.n,o.m]})};
@@ -198,7 +198,7 @@ window.look=async function(){var q=$("rq").value.trim();$("rm").textContent="";$
  catch(e){$("rm").textContent="ግንኙነት አልተሳካም። ኢንተርኔት ያረጋግጡ።"}};
 window.login=async function(){$("lm").textContent="";
  try{await signInWithEmailAndPassword(auth,$("em").value.trim(),$("pin").value)}
- catch(e){$("lm").textContent="ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም።";return}
+ catch(e){$("lm").textContent=(/invalid-(login|credential)|wrong-password|user-not-found/.test(e.code)?"ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም።":"ስህተት: "+e.code);return}
  try{var ss=await getDocs(collection(db,"students")),cf=await getDoc(doc(db,"config","subjects"));
   if(ss.empty&&D.s.length&&confirm("ዳታቤዙ ባዶ ነው። በዚህ ስልክ ላይ ያሉ "+D.s.length+" ተማሪዎች ወደ ዳታቤዝ ይጫኑ?")){ids=new Set();await syncAll()}
   else{D={s:ss.docs.map(function(d){return d.data()}),sub:cf.exists()?toSub(cf.data()):null,v:2};norm();ids=new Set(D.s.map(function(x){return x.id}))}
