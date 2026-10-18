@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="am"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1d4ed8"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-192.png"><title>Nexus Academy – የተማሪ ውጤት ሲስተም</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#14213d;--mu:#667085;--pr:#1d4ed8;--ok:#0f9d58;--bad:#d93025;--bd:#e3e8f0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1420;--card:#172033;--tx:#e8edf7;--mu:#98a2b3;--pr:#6ea0ff;--bd:#27334b}}
+:root[data-theme="dark"]{--bg:#0e1420;--card:#172033;--tx:#e8edf7;--mu:#98a2b3;--pr:#6ea0ff;--bd:#27334b}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans Ethiopic","Nyala",system-ui,sans-serif;line-height:1.5}
+header{background:var(--pr);color:#fff;padding:16px;text-align:center}
+header h1{margin:0;font-size:20px}header p{margin:2px 0 0;font-size:13px;opacity:.9}
+.tabs{display:flex;gap:8px;padding:12px;max-width:760px;margin:auto}
+.tabs button{flex:1;padding:10px;border:1px solid var(--bd);background:var(--card);color:var(--tx);border-radius:10px;font:inherit;font-weight:600}
+.tabs button.on{background:var(--pr);color:#fff;border-color:var(--pr)}
+main{max-width:760px;margin:auto;padding:0 12px 24px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+h2{font-size:16px;margin:0 0 10px}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit;margin-top:4px}
+label{font-size:13px;color:var(--mu);display:block;margin-top:8px}
+.btn{padding:10px 14px;border:0;border-radius:8px;background:var(--pr);color:#fff;font:inherit;font-weight:600;margin-top:10px}
+.btn.g{background:var(--card);color:var(--tx);border:1px solid var(--bd)}.btn.r{background:var(--bad)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+.sum{display:flex;justify-content:space-between;text-align:center;gap:6px}
+.sum b{display:block;font-size:20px;color:var(--pr)}.sum span{font-size:12px;color:var(--mu)}
+.badge{display:inline-block;padding:4px 12px;border-radius:20px;font-weight:700;font-size:14px}
+.p{background:#d9f5e5;color:#0b6b3a}.f{background:#fde0de;color:#a3190f}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}th{color:var(--mu);font-weight:600}
+.msg{color:var(--bad);font-size:14px;margin-top:8px}
+footer{text-align:center;color:var(--mu);font-size:12px;padding:16px}
+.hide{display:none}
+</style></head><body>
+<header><h1>Nexus Academy</h1><p>የተማሪ ውጤት ሲስተም</p></header>
+<div class="tabs"><button id="t1" class="on" onclick="tab(1)">🎓 ተማሪ</button><button id="t2" onclick="tab(2)">👩‍🏫 መምህር</button></div>
+<main>
+<section id="v1">
+ <div class="card"><h2>ውጤት ይመልከቱ</h2>
+  <label>የምዝገባ ቁጥር (Registration Number)</label>
+  <input id="rq" inputmode="numeric" placeholder="ለምሳሌ 0082347">
+  <button class="btn" onclick="look()">ውጤት አሳይ</button><div id="rm" class="msg"></div></div>
+ <div id="res"></div>
+</section>
+<section id="v2" class="hide">
+ <div id="lg" class="card"><h2>የመምህር መግቢያ</h2>
+  <label>የይለፍ ቁጥር (PIN)</label><input id="pin" type="password" inputmode="numeric" placeholder="መጀመሪያ: 1234">
+  <button class="btn" onclick="login()">ግባ</button><div id="lm" class="msg"></div></div>
+ <div id="tp" class="hide">
+  <div class="card"><h2 id="ft">አዲስ ተማሪ ጨምር</h2>
+   <div class="grid">
+    <div style="grid-column:1/3"><label>ሙሉ ስም</label><input id="f_name"></div>
+    <div><label>የምዝገባ ቁጥር</label><input id="f_id" inputmode="numeric"></div>
+    <div><label>ጾታ</label><select id="f_g"><option>Male</option><option>Female</option></select></div>
+    <div><label>ክፍል (Grade)</label><input id="f_gr" value="Grade 8"></div>
+    <div><label>የትምህርት ዘመን</label><input id="f_y" value="2018"></div>
+    <div><label>ዞን</label><input id="f_z" value="Gurage"></div>
+    <div><label>ወረዳ</label><input id="f_w" value="WOLKITE"></div>
+   </div>
+   <h2 style="margin-top:14px">የተመለሱ ጥያቄዎች (Answered)</h2>
+   <div class="grid" id="subs"></div>
+   <button class="btn" onclick="save()">አስቀምጥ</button>
+   <button class="btn g" onclick="clearForm()">አዲስ</button><div id="fm" class="msg"></div></div>
+  <div class="card"><h2>የተማሪዎች ዝርዝር</h2><div class="tw"><table id="lt"></table></div></div>
+  <div class="card"><h2>ቅንብር</h2>
+   <label>አዲስ PIN</label><input id="np" type="password" inputmode="numeric">
+   <button class="btn g" onclick="chPin()">PIN ቀይር</button>
+   <button class="btn g" onclick="exp()">ዳታ ላክ (Backup)</button>
+   <button class="btn g" onclick="document.getElementById('imp').click()">ዳታ አስገባ</button>
+   <input id="imp" type="file" accept=".json" class="hide" onchange="imp(this)">
+   <button class="btn g" onclick="out()">ውጣ</button></div>
+ </div>
+</section>
+</main>
+<footer>Developed by Denekew Bamlaku · DB technologies</footer>
+<script>
+var SUB=[["en","English",60],["ci","Citizenship",60],["ma","Mathematics",40],["ss","Social Studies",60],["gs","General Science",60],["am","Amharic as Mother Tongue",60]];
+var K="nexus_results_v1",D;
+function load(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){D=null}
+ if(!D||!D.s){D={pin:"1234",s:[{id:"0082347",name:"MOHAMMED ABDELLA SEMAN",g:"Male",gr:"Grade 8",y:"2018",z:"Gurage",w:"WOLKITE",a:{en:49,ci:53,ma:30,ss:54,gs:51,am:50}}]}}}
+function persist(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
+load();
+function $(i){return document.getElementById(i)}
+function esc(t){return String(t).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function r2(n){return Math.round(n*100)/100}
+function calc(s){var t=0,m=0,rows=SUB.map(function(x){var a=+s.a[x[0]]||0,sc=a/x[2]*100;t+=sc;m+=a;return{n:x[1],a:a,o:x[2],sc:sc}});
+ return{rows:rows,total:t,mark:m,avg:t/SUB.length}}
+function pct(s){var me=calc(s).total,n=D.s.length;if(n<2)return 100;var b=D.s.filter(function(o){return calc(o).total<me}).length;return b/(n-1)*100}
+function tab(n){$("v1").classList.toggle("hide",n!=1);$("v2").classList.toggle("hide",n!=2);$("t1").className=n==1?"on":"";$("t2").className=n==2?"on":""}
+function look(){var q=$("rq").value.trim(),s=D.s.filter(function(x){return x.id===q})[0];$("rm").textContent="";
+ if(!s){$("res").innerHTML="";$("rm").textContent="ይህ የምዝገባ ቁጥር አልተገኘም።";return}
+ $("res").innerHTML=card(s)}
+function card(s){var c=calc(s),ok=c.avg>=50;
+ return '<div class="card"><h2 style="text-align:center">Student Profile</h2><p style="text-align:center;font-weight:700;margin:6px 0 12px">'+esc(s.name)+'</p><div class="grid">'+
+ [["Registration Number",s.id],["Nationality","Ethiopian"],["Gender",s.g],["Zone",s.z],["Grade",s.gr],["Woreda",s.w],["Academic Year",s.y],["School","NEXUS"]].map(function(p){return '<div><span style="font-size:12px;color:var(--mu)">'+p[0]+'</span><br><b>'+esc(p[1])+'</b></div>'}).join("")+
+ '</div></div><div class="card"><h2>Result Summary</h2><div class="sum"><div><span>Total Score</span><b>'+r2(c.total)+'</b></div><div><span>Mark</span><b>'+c.mark+'</b></div><div><span>Percentile</span><b>'+r2(pct(s))+'</b></div><div><span>Average</span><b>'+r2(c.avg)+'</b></div><div><span>Status</span><span class="badge '+(ok?"p":"f")+'">'+(ok?"✓ Passed":"Failed")+'</span></div></div></div>'+
+ '<div class="card"><h2>Subject Wise Results</h2><div class="tw"><table><tr><th>Subject</th><th>Answered</th><th>Score / 100</th></tr>'+
+ c.rows.map(function(r){return '<tr><td>'+r.n+'</td><td>'+r.a+' / '+r.o+'</td><td>'+r2(r.sc)+' / 100</td></tr>'}).join("")+'</table></div></div>'}
+function login(){if($("pin").value===D.pin){$("lg").classList.add("hide");$("tp").classList.remove("hide");$("lm").textContent="";draw()}else $("lm").textContent="PIN ትክክል አይደለም።"}
+function out(){$("tp").classList.add("hide");$("lg").classList.remove("hide");$("pin").value=""}
+function chPin(){var p=$("np").value.trim();if(p.length<4){alert("ቢያንስ 4 ቁጥር ያስገቡ");return}D.pin=p;persist();$("np").value="";alert("PIN ተቀይሯል")}
+$("subs").innerHTML=SUB.map(function(x){return '<div><label>'+x[1]+' (/'+x[2]+')</label><input type="number" min="0" max="'+x[2]+'" id="s_'+x[0]+'"></div>'}).join("");
+var edit=null;
+function clearForm(){edit=null;["name","id"].forEach(function(k){$("f_"+k).value=""});SUB.forEach(function(x){$("s_"+x[0]).value=""});$("ft").textContent="አዲስ ተማሪ ጨምር";$("fm").textContent=""}
+function save(){var id=$("f_id").value.trim(),nm=$("f_name").value.trim().toUpperCase();
+ if(!id||!nm){$("fm").textContent="ስም እና የምዝገባ ቁጥር ያስፈልጋል።";return}
+ var a={};for(var i=0;i<SUB.length;i++){var v=+$("s_"+SUB[i][0]).value;if(v<0||v>SUB[i][2]){$("fm").textContent=SUB[i][1]+": ከ0 እስከ "+SUB[i][2]+" ብቻ።";return}a[SUB[i][0]]=v}
+ var s={id:id,name:nm,g:$("f_g").value,gr:$("f_gr").value,y:$("f_y").value,z:$("f_z").value,w:$("f_w").value,a:a};
+ var dup=D.s.filter(function(x){return x.id===id&&x.id!==edit}).length;if(dup){$("fm").textContent="ይህ ቁጥር ቀድሞ ተመዝግቧል።";return}
+ var ix=D.s.findIndex(function(x){return x.id===(edit||id)});if(ix>=0)D.s[ix]=s;else D.s.push(s);
+ persist();clearForm();$("fm").textContent="✓ ተቀምጧል";draw()}
+function draw(){var L=D.s.slice().sort(function(a,b){return calc(b).total-calc(a).total});
+ $("lt").innerHTML='<tr><th>#</th><th>ስም</th><th>ቁጥር</th><th>አማካይ</th><th></th></tr>'+L.map(function(s,i){return '<tr><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.id)+'</td><td>'+r2(calc(s).avg)+'</td><td><button class="btn g" style="margin:0;padding:4px 8px" data-e="'+esc(s.id)+'">አርም</button> <button class="btn r" style="margin:0;padding:4px 8px" data-d="'+esc(s.id)+'">ሰርዝ</button></td></tr>'}).join("")}
+$("lt").onclick=function(e){var t=e.target,id=t.getAttribute("data-e"),dl=t.getAttribute("data-d");
+ if(id){var s=D.s.filter(function(x){return x.id===id})[0];edit=id;$("f_name").value=s.name;$("f_id").value=s.id;$("f_g").value=s.g;$("f_gr").value=s.gr;$("f_y").value=s.y;$("f_z").value=s.z;$("f_w").value=s.w;SUB.forEach(function(x){$("s_"+x[0]).value=s.a[x[0]]});$("ft").textContent="ተማሪ አርም";scrollTo(0,0)}
+ if(dl&&confirm("ይሰረዝ?")){D.s=D.s.filter(function(x){return x.id!==dl});persist();draw()}};
+function exp(){var b=new Blob([JSON.stringify(D)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="nexus-results.json";a.click()}
+function imp(el){var f=el.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.s){D=d;persist();draw();alert("ተሳክቷል")}}catch(e){alert("ፋይሉ ልክ አይደለም")}};r.readAsText(f)}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
+</script></body></html>
