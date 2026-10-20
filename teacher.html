@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="am"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Nexus Academy – መምህር</title>
+<style>
+:root{--bg:#f4f6fb;--card:#fff;--tx:#14213d;--mu:#667085;--pr:#1d4ed8;--bad:#d93025;--bd:#e3e8f0}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1420;--card:#172033;--tx:#e8edf7;--mu:#98a2b3;--pr:#6ea0ff;--bd:#27334b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans Ethiopic","Nyala",system-ui,sans-serif;line-height:1.5;padding-top:env(safe-area-inset-top,0)}
+header{background:var(--pr);color:#fff;padding:16px;text-align:center}header h1{margin:0;font-size:20px}
+main{max-width:900px;margin:auto;padding:12px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:12px;padding:14px;margin-bottom:12px}
+h2{margin:0 0 10px;font-size:17px}label{font-size:12px;color:var(--mu);display:block;margin-top:8px}
+input,select{width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+button{padding:10px 14px;border:0;border-radius:8px;background:var(--pr);color:#fff;font:inherit;font-weight:600;margin-top:10px}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--pr);outline-offset:2px}
+.tw{overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:6px;text-align:left;border-bottom:1px solid var(--bd);white-space:nowrap}
+@media print{header,footer,button,#lg,.noprint,label,.g{display:none!important}td input{border:0;width:auto;background:none}body{background:#fff;color:#000}}
+td input{width:56px;padding:4px}.m{font-size:14px;margin-top:8px;color:var(--bad)}.ok{color:#0f9d58}.hide{display:none}
+@media print{header,footer,button,#lg,.noprint,label,.g{display:none!important}body{background:#fff;color:#000}td input{border:0;background:none;width:auto;color:#000}}
+</style></head><body>
+<header><h1>Nexus Academy</h1><div id="who">የመምህር ገጽ</div></header>
+<main>
+<div id="lg" class="card"><h2>የመምህር መግቢያ</h2>
+<label>ኢሜይል</label><input id="em" type="email" autocomplete="username">
+<label>የይለፍ ቃል</label><input id="pw" type="password" autocomplete="current-password">
+<button onclick="login()">ግባ</button><div id="lm" class="m"></div></div>
+<div id="tp" class="hide"><div class="card"><h2>ማርክሊስት</h2>
+<div class="g"><div><label>ቅርንጫፍ</label><select id="b" onchange="loadStudents()"></select></div>
+<div><label>ክፍል (Grade)</label><select id="gr" onchange="subjOpts()"></select></div>
+<div><label>ትምህርት</label><select id="s"></select></div>
+<div><label>ሴሚስተር</label><select id="q"><option value="1">Semester I</option><option value="2" selected>Semester II</option></select></div></div>
+<button onclick="open_()">ማርክሊስት ክፈት</button><div id="mm" class="m"></div>
+<div class="tw"><table id="mt"></table></div>
+<button id="sv" class="hide" onclick="save()">ውጤት አስቀምጥ</button>
+<div class="noprint"><button onclick="xExport()">⬇ Excel አውርድ</button> <button onclick="document.getElementById('xi').click()">⬆ Excel አስገባ</button> <button onclick="pdfList()">⬇ PDF</button>
+<input id="xi" type="file" accept=".xlsx,.xls" class="hide" onchange="xImport(this)"></div></div>
+<div class="card noprint"><h2>የተማሪ ቅሬታዎች</h2><button onclick="loadC()">አድስ</button><div id="cl"></div></div>
+<button onclick="out()">ውጣ</button></div>
+</main>
+<footer style="text-align:center;color:var(--mu);font-size:12px;padding:16px">Developed by Denekew Bamlaku · DB technologies</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
+import{getAuth,signInWithEmailAndPassword,signOut}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,getDocs,updateDoc,writeBatch,collection,query,where}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+// Use the same two values you put in index.html
+const CFG={apiKey:"PASTE_API_KEY",authDomain:"nexus-academy-b4efc.firebaseapp.com",projectId:"nexus-academy-b4efc",appId:"PASTE_APP_ID"};
+const app=initializeApp(CFG),auth=getAuth(app),db=getFirestore(app);
+const $=i=>document.getElementById(i),esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const MC=[["w1","Work Sht 1",5],["t1","Test 1",10],["as","Asst",10],["mi","Mid",20],["w2","Work Sht 2",5],["t2","Test 2",10],["qu","Qus",5],["eb","Ex. B'k",10]];
+const DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
+let SUB=DEF,ST=[],ME,A=[],TEACH=false;
+const say=(id,t,ok)=>{$(id).textContent=t;$(id).className="m"+(ok?" ok":"")};
+window.login=async()=>{say("lm","");
+ try{const c=await signInWithEmailAndPassword(auth,$("em").value.trim(),$("pw").value);
+  const u=await getDoc(doc(db,"users",c.user.uid));
+  if(!u.exists()||!(u.data().branches||[]).length){await signOut(auth);say("lm","ለዚህ መለያ ቅርንጫፍ አልተመደበም። አስተዳዳሪውን ያነጋግሩ።");return}
+  ME=u.data();TEACH=ME.role==="teacher";A=ME.assign||[];
+  if(TEACH&&!A.length){await signOut(auth);say("lm","ምደባ አልተሰጠዎትም። አስተዳዳሪውን ያነጋግሩ።");return}
+  $("who").textContent=ME.name||ME.email;
+  const bs=await getDocs(collection(db,"branches")),nm={};bs.docs.forEach(d=>nm[d.id]=d.data().name);
+  $("b").innerHTML=(TEACH?[...new Set(A.map(x=>x.b))]:ME.branches).map(i=>`<option value="${esc(i)}">${esc(nm[i]||i)}</option>`).join("");
+  const cf=await getDoc(doc(db,"config","subjects"));if(cf.exists())SUB=cf.data().sub.map(o=>[o.k,o.n,o.m]);
+  $("s").innerHTML=SUB.map(x=>`<option value="${esc(x[0])}">${esc(x[1])}</option>`).join("");
+  $("lg").classList.add("hide");$("tp").classList.remove("hide");await loadStudents();loadC()}
+ catch(e){say("lm","መግባት አልተሳካም: "+(e.code||e.message))}};
+window.out=()=>{signOut(auth);location.reload()};
+window.loadStudents=async()=>{
+ ST=(await getDocs(query(collection(db,"students"),where("branch","==",$("b").value)))).docs.map(d=>({k:d.id,...d.data()}));
+ const b0=$("b").value,g=[...new Set(ST.map(s=>s.gr))].filter(x=>!TEACH||A.some(a=>a.b===b0&&a.gr===x)).sort();
+ $("gr").innerHTML=g.map(x=>`<option>${esc(x)}</option>`).join("");
+ $("mt").innerHTML="";$("sv").classList.add("hide");subjOpts();say("mm",g.length?"":"በዚህ ቅርንጫፍ ተማሪ የለም።")};
+// A teacher only sees the subjects assigned for this branch + grade.
+window.subjOpts=()=>{const b=$("b").value,g=$("gr").value,ok=x=>!TEACH||A.some(a=>a.b===b&&a.gr===g&&a.s===x[0]);
+ $("s").innerHTML=SUB.filter(ok).map(x=>`<option value="${esc(x[0])}">${esc(x[1])}</option>`).join("")};
+const key=()=>$("s").value+"_"+$("q").value;
+const inp=(c,m)=>`<td><input type="number" min="0" max="${c[2]}" data-k="${c[0]}" value="${m[c[0]]==null?"":m[c[0]]}"></td>`;
+window.open_=()=>{const L=ST.filter(s=>s.gr===$("gr").value).sort((a,b)=>a.name.localeCompare(b.name));
+ if(!L.length){say("mm","ክፍሉ ተማሪ የለውም።");return}
+ $("mt").innerHTML="<tr><th>No</th><th>Name</th><th>Sex</th>"+MC.map(c=>`<th>${c[1]}<br>(${c[2]})</th>`).join("")+"<th>Sub total<br>(75)</th><th>Final<br>(25)</th><th>Total<br>(100)</th></tr>"+
+  L.map((s,i)=>{const m=(s.ml&&s.ml[key()])||{};return `<tr data-i="${esc(s.k)}"><td>${i+1}</td><td>${esc(s.name)}</td><td>${s.g==="Male"?"M":"F"}</td>${MC.map(c=>inp(c,m)).join("")}<td class="st"></td>${inp(["fe","",25],m)}<td class="tt"></td></tr>`}).join("");
+ $("mt").oninput=e=>{const t=e.target;if(t.value!==""&&+t.value>+t.max)t.value=t.max;if(+t.value<0)t.value=0;calc()};
+ $("sv").classList.remove("hide");say("mm","");calc()};
+function calc(){$("mt").querySelectorAll("tr[data-i]").forEach(r=>{let st=0,fe=0;r.querySelectorAll("input").forEach(e=>{const v=+e.value||0;if(e.dataset.k==="fe")fe=v;else st+=v});r.querySelector(".st").textContent=st;r.querySelector(".tt").textContent=st+fe})}
+// Recomputes class rank (same branch + grade) from saved marks; ties share a rank.
+async function rank(){const br=$("b").value,gr=$("gr").value;
+ ST=(await getDocs(query(collection(db,"students"),where("branch","==",br)))).docs.map(d=>({k:d.id,...d.data()}));
+ const tot=s=>SUB.reduce((t,x)=>t+((+(s.a||{})[x[0]]||0)/x[2]*100),0);
+ const L=ST.filter(s=>s.gr===gr).sort((a,b)=>tot(b)-tot(a)),b=writeBatch(db);let r=0,prev=null;
+ L.forEach((s,i)=>{const t=Math.round(tot(s)*100);if(t!==prev){r=i+1;prev=t}b.update(doc(db,"students",s.k),{rk:r,cn:L.length})});
+ await b.commit()}
+const hd=c=>c?c[1]+" ("+c[2]+")":"Final (25)";
+window.xExport=()=>{const rows=[...$("mt").querySelectorAll("tr[data-i]")];if(!rows.length){say("mm","መጀመሪያ ማርክሊስት ይክፈቱ።");return}
+ const data=rows.map((r,i)=>{const o={No:i+1,Name:r.children[1].textContent,Sex:r.children[2].textContent};
+  r.querySelectorAll("input").forEach(e=>{o[hd(MC.find(x=>x[0]===e.dataset.k))]=e.value===""?"":+e.value});
+  o["Total (100)"]=+r.querySelector(".tt").textContent;return o});
+ const wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(data),"Marklist");
+ XLSX.writeFile(wb,"marklist-"+$("s").value+"-"+$("gr").value+".xlsx")};
+// Import matches rows by Name; use the file made by "Excel አውርድ" as the template.
+window.xImport=el=>{const f=el.files[0];if(!f)return;
+ if(!$("mt").querySelector("tr[data-i]")){say("mm","መጀመሪያ ማርክሊስት ይክፈቱ።");el.value="";return}
+ const rd=new FileReader();rd.onload=()=>{try{
+  const wb=XLSX.read(rd.result,{type:"array"}),L=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]),rows={};let n=0;
+  $("mt").querySelectorAll("tr[data-i]").forEach(r=>rows[r.children[1].textContent.trim().toUpperCase()]=r);
+  L.forEach(o=>{const r=rows[String(o.Name||"").trim().toUpperCase()];if(!r)return;n++;
+   r.querySelectorAll("input").forEach(e=>{let v=o[hd(MC.find(x=>x[0]===e.dataset.k))];if(v===undefined||v==="")return;e.value=Math.max(0,Math.min(+e.max,+v||0))})});
+  calc();say("mm",n+" ተማሪ ከExcel ተነበበ። «ውጤት አስቀምጥ» ይጫኑ።",1)}catch(e){say("mm","ፋይሉ ልክ አይደለም።")}};
+ rd.readAsArrayBuffer(f);el.value=""};
+window.pdfList=()=>{if(!$("mt").querySelector("tr[data-i]")){say("mm","መጀመሪያ ማርክሊስት ይክፈቱ።");return}
+ document.title="Marklist-"+$("s").value+"-"+$("gr").value;print()};
+window.loadC=async()=>{const q=await getDocs(query(collection(db,"complaints"),where("tid","==",auth.currentUser.uid)));
+ const L=q.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>b.at-a.at);
+ $("cl").innerHTML=L.length?L.map(c=>`<div style="border-top:1px solid var(--bd);padding:8px 0"><b>${esc(c.sn)}</b> <small>${new Date(c.at).toLocaleDateString()}</small><div>${esc(c.text)}</div>${c.reply?`<div class="ok">↩ ${esc(c.reply)}</div>`:`<input id="r_${esc(c.id)}" placeholder="ምላሽ"><button data-c="${esc(c.id)}">ላክ</button>`}</div>`).join(""):"ቅሬታ የለም።"};
+$("cl").onclick=async e=>{const id=e.target.dataset.c;if(!id)return;const v=$("r_"+id).value.trim();if(!v)return;
+ try{await updateDoc(doc(db,"complaints",id),{reply:v,status:"done"});loadC()}catch(x){alert(x.code)}};
+window.save=async()=>{const sx=SUB.find(x=>x[0]===$("s").value);let n=0;
+ try{for(const r of $("mt").querySelectorAll("tr[data-i]")){const m={};let tot=0;
+   r.querySelectorAll("input").forEach(e=>{if(e.value!==""){m[e.dataset.k]=+e.value;tot+=+e.value}});
+   // Only this subject's fields are written, so other teachers' marks are never overwritten.
+   await updateDoc(doc(db,"students",r.dataset.i),{["ml."+key()]:m,["a."+sx[0]]:Math.round(tot/100*sx[2])});n++}
+  await rank();say("mm","✓ "+n+" ተማሪ ውጤት ተቀምጧል",1)}
+ catch(e){say("mm","አልተሳካም: "+(e.code||e.message))}};
+</script></body></html>
