@@ -30,8 +30,14 @@ th,td{padding:8px 6px;text-align:left;border-bottom:1px solid var(--bd);white-sp
 .msg{color:var(--bad);font-size:14px;margin-top:8px}
 footer{text-align:center;color:var(--mu);font-size:12px;padding:16px}
 .hide{display:none}
+@media print{body *{visibility:hidden}#res,#res *{visibility:visible}#res{position:absolute;left:0;top:0;width:100%}#res .noprint{display:none!important}body{background:#fff!important}#res *{color:#000!important;background:#fff!important;border-color:#999!important}}
+body.tch .adm{display:none!important}
+#idp{display:none}.idc{border:1px solid #000;border-radius:6px;padding:6px;width:86mm;height:54mm;box-sizing:border-box;display:inline-block;margin:2mm;vertical-align:top;font-size:12px;background:#fff;color:#000}.idr{display:flex;gap:8px;margin-top:6px}.idph{width:24mm;height:30mm;border:1px solid #888;flex:none;overflow:hidden}.idph img{width:100%;height:100%;object-fit:cover}
+@media print{body.pid #idp{display:block;position:absolute;left:0;top:0;width:100%}body.pid *{visibility:hidden}body.pid #idp,body.pid #idp *{visibility:visible}}
+@media print{.tmp{page-break-after:always;break-after:page}}
+body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body.prp #rp{position:absolute;left:0;top:0;width:100%}body.prp .noprint{display:none!important}
 </style></head><body>
-<header><h1>Nexus Academy</h1><p>የተማሪ ውጤት ሲስተም</p></header>
+<header><img src="logo.png" alt="" style="width:64px;height:64px;border-radius:50%;background:#fff;margin-bottom:6px" onerror="this.style.display='none'"><h1>Nexus Academy</h1><p>የተማሪ ውጤት ሲስተም</p></header>
 <div class="tabs"><button id="t1" class="on" onclick="tab(1)">🎓 ተማሪ</button><button id="t2" onclick="tab(2)">👩‍🏫 መምህር</button></div>
 <main>
 <section id="v1">
@@ -46,12 +52,12 @@ footer{text-align:center;color:var(--mu);font-size:12px;padding:16px}
   <label>ኢሜይል</label><input id="em" type="email" autocomplete="username"><label>የይለፍ ቃል</label><input id="pin" type="password" autocomplete="current-password">
   <button class="btn" onclick="login()">ግባ</button><div id="lm" class="msg"></div></div>
  <div id="tp" class="hide">
-  <div class="card"><h2 id="ft">አዲስ ተማሪ ጨምር</h2>
+  <div class="card adm"><h2 id="ft">አዲስ ተማሪ ጨምር</h2>
    <div class="grid">
     <div style="grid-column:1/3"><label>ሙሉ ስም</label><input id="f_name"></div>
     <div><label>የምዝገባ ቁጥር</label><input id="f_id" inputmode="numeric"></div>
     <div><label>ጾታ</label><select id="f_g"><option>Male</option><option>Female</option></select></div>
-    <div><label>ክፍል (Grade)</label><input id="f_gr" value="Grade 8"></div>
+    <div><label>ክፍል (Grade)</label><input id="f_gr" value="Grade 8"></div><div><label>ፎቶ</label><input id="f_ph" type="file" accept="image/*" onchange="phPick(this.files[0])"></div>
     <div><label>የትምህርት ዘመን</label><input id="f_y" value="2018"></div>
     <div><label>ዞን</label><input id="f_z" value="Gurage"></div>
     <div><label>ወረዳ</label><input id="f_w" value="WOLKITE"></div>
@@ -60,12 +66,39 @@ footer{text-align:center;color:var(--mu);font-size:12px;padding:16px}
    <div class="grid" id="subs"></div>
    <button class="btn" onclick="save()">አስቀምጥ</button>
    <button class="btn g" onclick="clearForm()">አዲስ</button><div id="fm" class="msg"></div></div>
-  <div class="card"><h2>የተማሪዎች ዝርዝር</h2><div class="tw"><table id="lt"></table></div></div>
-  <div class="card"><h2>ትምህርቶች (Subjects)</h2>
+  <div class="card adm"><h2>የተማሪዎች ዝርዝር <small id="lc"></small></h2><div class="grid"><div><label>ክፍል</label><select id="lf" onchange="draw()"></select></div><div><label>ፈልግ (ስም ወይም ቁጥር)</label><input id="lq" oninput="draw()"></div></div><button class="btn g" onclick="idCards()">🪪 የክፍሉ ID cards አትም</button><div class="tw"><table id="lt"></table></div></div>
+  <div class="card adm"><h2>ትምህርቶች (Subjects)</h2>
    <div class="tw"><table id="sl"></table></div>
    <div class="grid"><div><label>የትምህርት ስም</label><input id="ns" placeholder="ለምሳሌ Information Technology"></div>
    <div><label>ከፍተኛ ውጤት</label><input id="nm" type="number" inputmode="numeric" value="100"></div></div>
    <button class="btn" onclick="addSub()">ትምህርት ጨምር</button><div id="sm" class="msg"></div></div>
+  <div class="card hide" id="ad"><h2>🛡 Admin</h2>
+   <label>Admins</label><div class="tw"><table id="al"></table></div>
+   <div class="grid"><div><label>ስም</label><input id="an"></div><div><label>ኢሜይል</label><input id="ae" type="email"></div><div><label>የይለፍ ቃል (ቢያንስ 8)</label><input id="ap" type="password"></div></div>
+   <button class="btn" onclick="addAdm()">Admin ጨምር</button><div id="aam" class="msg"></div>
+   <label>ቅርንጫፎች</label><div class="tw"><table id="bl"></table></div>
+   <div class="grid"><div><label>የቅርንጫፍ ስም</label><input id="bn"></div><div style="align-self:end"><button class="btn" onclick="addBr()">ቅርንጫፍ ጨምር</button></div></div>
+   <label>✉️ ለመምህራን መልዕክት</label><select id="mt_to"></select><textarea id="mt_tx" rows="3" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn" onclick="sendMsg()">መልዕክት ላክ</button>
+   <label style="margin-top:12px">🖼 የ website ፎቶ መቀየሪያ</label><div class="grid"><div><select id="sw_n"><option value="1">Slide 1</option><option value="2">Slide 2</option><option value="3">Slide 3</option><option value="4">Slide 4</option><option value="5">Slide 5</option><option value="6">Slide 6</option><option value="7">Slide 7</option></select></div><div><input id="sw_f" type="file" accept="image/*"></div></div><button class="btn" onclick="siteUp()">ፎቶ ጫን</button> <button class="btn g" onclick="siteReset()">ወደ ነባሪ መልስ</button><div id="sw_m" class="msg"></div>
+   <label style="margin-top:12px">ውጤት መሙላት (ለመምህራን)</label><div style="margin-bottom:10px"><label style="display:inline-block;margin-right:14px"><input type="checkbox" id="sm1" style="width:auto" onchange="setSm()"> ሴሚስተር I ክፍት</label><label style="display:inline-block"><input type="checkbox" id="sm2" style="width:auto" onchange="setSm()"> ሴሚስተር II ክፍት</label></div>
+   <label>የውጤት ደረጃ (ነጥብ:ፊደል)</label><div class="grid"><div><input id="gs" placeholder="97:A,90:B,80:C,70:D,60:E,0:F"></div><div><button class="btn" onclick="setGs()">ደረጃ አስቀምጥ</button></div></div>
+   <label style="margin-top:12px">ክፍሎች</label><div class="tw"><table id="cl"></table></div>
+   <div class="grid"><div><label>አዲስ ክፍል</label><input id="cn" placeholder="Grade 9A"></div><div style="align-self:end"><button class="btn" onclick="addCl()">ክፍል ጨምር</button></div></div><div id="cm" class="msg"></div>
+   <label style="margin-top:12px">መምህራን</label><div class="tw"><table id="tl"></table></div>
+   <div class="grid"><div><label>ስም</label><input id="tn"></div><div><label>ኢሜይል</label><input id="te" type="email"></div>
+   <div><label>የይለፍ ቃል (ቢያንስ 8)</label><input id="tp" type="password"></div>
+   <div><label>ሚና</label><select id="tr"><option value="teacher">መምህር</option><option value="homeroom">Homeroom መምህር</option><option value="director">የቅርንጫፍ ዳይሬክተር</option></select></div>
+   <div><label>ቅርንጫፍ</label><select id="tb"></select></div><div><label>ትምህርቶች (በኮማ)</label><input id="ts" placeholder="ICT, CTE"></div><div><label>ክፍሎች (በኮማ)</label><input id="tc" placeholder="Grade 8A, Grade 8B"></div></div>
+   <button class="btn" onclick="addStaff()">መምህር ጨምር</button><div id="am" class="msg"></div></div>
+  <div class="card adm" id="dp"><h2>🏢 ዲፓርትመንቶች</h2><div id="dpl"></div><div class="grid"><div><label>የ department ስም</label><input id="dp_n" placeholder="ሳይንስና ቴክኖሎጂ"></div><div><label>ተጠሪ</label><select id="dp_h"></select></div></div><button class="btn" onclick="addDp()">ጨምር</button><div id="dp_m" class="msg"></div></div>
+  <div class="card hide" id="nt"><h2>📢 ለወላጆች ማስታወቂያ (Homeroom)</h2><div class="grid"><div><label>ክፍል</label><input id="nt_c" list="gl" placeholder="Grade 8A"></div><div><label>ርዕስ</label><input id="nt_t"></div></div><textarea id="nt_x" rows="3" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn" onclick="addNt()">አትም</button><div id="nt_m" class="msg"></div><div id="ntl"></div></div>
+  <div class="card" id="lv"><h2>🗓 የፈቃድ ጥያቄ <small id="lvc"></small></h2><div id="lv_f"><div class="grid"><div><label>ዓይነት</label><select id="lv_t"><option>የዓመት ፈቃድ</option><option>የህመም ፈቃድ</option><option>የግል ጉዳይ</option><option>ሌላ</option></select></div><div><label>ከ</label><input id="lv_a" type="date"></div><div><label>እስከ</label><input id="lv_b" type="date"></div></div><label>ምክንያት</label><textarea id="lv_r" rows="2" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn" onclick="sendLv()">ጥያቄ ላክ</button><div id="lv_m" class="msg"></div></div><div id="lvl"></div></div>
+  <div class="card adm" id="dc"><h2>⚖️ ዲሲፕሊን (ማስጠንቀቂያ / ቅጣት)</h2><div class="grid"><div><label>ለማን</label><select id="dc_k" onchange="dcSw()"><option value="student">ተማሪ</option><option value="teacher">መምህር</option></select></div><div id="dc_si"><label>የተማሪ ምዝገባ ቁጥር</label><input id="dc_i"></div><div id="dc_st" class="hide"><label>መምህር</label><select id="dc_p"></select></div><div><label>ደረጃ</label><select id="dc_l"><option>የቃል ማስጠንቀቂያ</option><option>የጽሁፍ ማስጠንቀቂያ</option><option>ቅጣት</option><option>እገዳ</option></select></div></div><label>ማስታወሻ</label><textarea id="dc_n" rows="2" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn" onclick="addDc()">መዝግብ</button><div id="dc_m" class="msg"></div><div id="dcl"></div></div>
+  <div class="card hide" id="dcT"><h2>⚠️ ለእርስዎ የተመዘገቡ ማስታወሻዎች</h2><div id="dcTl"></div></div>
+  <div class="card" id="ib"><h2>📥 መልዕክቶች</h2><div id="ibl"></div></div>
+  <div class="card hide" id="rp"><h2>📑 ሪፖርቶች</h2><div id="rp_f"><div class="grid"><div><label>ዓይነት</label><select id="rp_p"><option value="daily">ዕለታዊ</option><option value="weekly">ሳምንታዊ</option><option value="monthly">ወርሃዊ</option><option value="annual">ዓመታዊ</option></select></div></div><textarea id="rp_t" rows="5" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn" onclick="sendRp()">ሪፖርት ላክ</button><div id="rp_m" class="msg"></div></div><button class="btn g noprint" onclick="printRp()">🖨 አትም</button><div id="rpl"></div></div>
+  <div class="card" id="mc"><h2>📚 ለተማሪዎች Material (መጽሐፍ፣ ፈተና…)</h2><div class="grid"><div><label>ትምህርት</label><select id="mc_s"></select></div><div><label>ክፍል</label><input id="mc_c" list="gl" placeholder="Grade 8A"></div></div><label>ርዕስ</label><input id="mc_t"><label>ሊንክ (Google Drive / Telegram…)</label><input id="mc_u" type="url" placeholder="https://..."><button class="btn" onclick="addMat()">አጋራ</button><div id="mc_m" class="msg"></div><div id="mc_l"></div></div>
+  <div class="card"><h2>📨 ቅሬታዎች <small id="cc"></small></h2><button class="btn g" onclick="loadCp()">አድስ</button><div id="cl2"></div></div>
   <div class="card"><h2>📋 Marklist (የውጤት መመዝገቢያ)</h2>
    <div class="grid">
     <div><label>የመምህር ስም</label><input id="m_t" value="Denekew Bamlaku"></div>
@@ -73,13 +106,17 @@ footer{text-align:center;color:var(--mu);font-size:12px;padding:16px}
     <div><label>ክፍል (Grade)</label><input id="m_g" list="gl" value="Grade 8"><datalist id="gl"></datalist></div>
     <div><label>ሴሚስተር</label><select id="m_q"><option value="1">Semester I</option><option value="2" selected>Semester II</option></select></div>
    </div>
-   <button class="btn" onclick="mlOpen()">ማርክሊስት ክፈት</button>
+   <button class="btn" onclick="mlOpen()">ማርክሊስት ክፈት</button> <button class="btn adm" onclick="pubCl()">📤 ውጤት አትም (Admin)</button> <button class="btn adm" onclick="tmpCards()">🖨 ጊዜያዊ ካርድ (Open house)</button> <button class="btn adm" onclick="rcClass()">📘 Report cards (ክፍል)</button> <button class="btn g hide" id="tfb" onclick="transferXl()">📊 Transfer sheet (Excel)</button>
+   <button class="btn g" onclick="xlExport()">⬇ Excel አውርድ</button> <label class="btn g" style="display:inline-block;cursor:pointer">⬆ Excel አስገባ<input type="file" accept=".xlsx,.xls,.csv" hidden onchange="xlImport(this.files[0]);this.value=''"></label>
+   <label class="btn g adm" style="display:inline-block;cursor:pointer">👥 ተማሪዎችን ከ Excel (ሁሉም ሉሆች)<input type="file" accept=".xlsx,.xls" hidden onchange="rosterImport(this.files[0]);this.value=''"></label>
    <div class="tw"><table id="mt"></table></div>
    <button class="btn hide" id="mb" onclick="mlSave()">ውጤት አስቀምጥ</button><div id="mm" class="msg"></div>
-   <h2 style="margin-top:14px">ተማሪዎችን በአንድ ጊዜ ጨምር</h2>
-   <textarea id="bk" rows="4" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit" placeholder="በየመስመሩ: የምዝገባ ቁጥር, ስም, M ወይም F"></textarea>
-   <button class="btn g" onclick="bulk()">ጨምር</button></div>
-  <div class="card"><h2>ቅንብር</h2>
+   <h2 class="adm" style="margin-top:14px">ተማሪዎችን በአንድ ጊዜ ጨምር</h2>
+   <textarea class="adm" id="bk" rows="4" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit" placeholder="በየመስመሩ: የምዝገባ ቁጥር, ስም, M ወይም F"></textarea>
+   <button class="btn g adm" onclick="bulk()">ጨምር</button></div>
+  <div class="card adm"><h2>🏆 ደረጃ (Top 20)</h2><div class="grid"><div><label>ክልል</label><select id="t_s"><option value="all">ሁሉም ቅርንጫፍ (አጠቃላይ)</option></select></div></div>
+   <button class="btn" onclick="top20()">አሳይ</button> <button class="btn g" onclick="topXl()">⬇ Excel</button><div class="tw"><table id="tt20"></table></div></div>
+  <div class="card adm"><h2>ቅንብር</h2>
    <button class="btn g" onclick="chPin()">የይለፍ ቃል ቀይር (ኢሜይል ይላካል)</button>
    <button class="btn g" onclick="exp()">ዳታ ላክ (Backup)</button>
    <button class="btn g" onclick="document.getElementById('imp').click()">ዳታ አስገባ</button>
@@ -96,7 +133,7 @@ function load(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){D=null}
  if(!D||!D.s){D={pin:"1234",s:[{id:"0082347",name:"MOHAMMED ABDELLA SEMAN",g:"Male",gr:"Grade 8",y:"2018",z:"Gurage",w:"WOLKITE",a:{en:82,ci:88,ma:75,ss:90,gs:85,am:83}}],v:2}}
  norm()}
 function norm(){if(D.v!==2){var OM={en:60,ci:60,ma:40,ss:60,gs:60,am:60};D.s.forEach(function(x){for(var k in OM){if(x.a[k]!=null)x.a[k]=Math.round(x.a[k]/OM[k]*100)}});D.v=2}
- if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub}
+ if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub;if(!D.cl)D.cl=[];if(!D.cb)D.cb={};if(!D.gs)D.gs="90:A,80:B,70:C,60:D,50:E,0:F"}
 function persist(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
 load();
 function $(i){return document.getElementById(i)}
@@ -132,13 +169,13 @@ $("sl").onclick=function(e){var i=e.target.getAttribute("data-x");if(i===null)re
  if(confirm(SUB[i][1]+" ይሰረዝ? የተማሪዎች ውጤት ስሌት ይቀየራል።")){SUB.splice(+i,1);persist();renderSubs();draw();$("sm").textContent=""}};
 renderSubs();
 var edit=null;
-function clearForm(){edit=null;["name","id"].forEach(function(k){$("f_"+k).value=""});SUB.forEach(function(x){$("s_"+x[0]).value=""});$("ft").textContent="አዲስ ተማሪ ጨምር";$("fm").textContent=""}
+function clearForm(){edit=null;window.PH=null;if($("f_ph"))$("f_ph").value="";["name","id"].forEach(function(k){$("f_"+k).value=""});SUB.forEach(function(x){$("s_"+x[0]).value=""});$("ft").textContent="አዲስ ተማሪ ጨምር";$("fm").textContent=""}
 function save(){var id=$("f_id").value.trim(),nm=$("f_name").value.trim().toUpperCase();
  if(!id||!nm){$("fm").textContent="ስም እና የምዝገባ ቁጥር ያስፈልጋል።";return}
  var a={};for(var i=0;i<SUB.length;i++){var v=+$("s_"+SUB[i][0]).value;if(v<0||v>SUB[i][2]){$("fm").textContent=SUB[i][1]+": ከ0 እስከ "+SUB[i][2]+" ብቻ።";return}a[SUB[i][0]]=v}
- var s={id:id,name:nm,g:$("f_g").value,gr:$("f_gr").value,y:$("f_y").value,z:$("f_z").value,w:$("f_w").value,a:a};
+ var s={id:id,name:nm,g:$("f_g").value,gr:$("f_gr").value,y:$("f_y").value,z:$("f_z").value,w:$("f_w").value,a:a};if(window.PH)s.ph=window.PH;
  var dup=D.s.filter(function(x){return x.id===id&&x.id!==edit}).length;if(dup){$("fm").textContent="ይህ ቁጥር ቀድሞ ተመዝግቧል።";return}
- var ix=D.s.findIndex(function(x){return x.id===(edit||id)});if(ix>=0)D.s[ix]=s;else D.s.push(s);
+ var ix=D.s.findIndex(function(x){return x.id===(edit||id)});if(ix>=0)D.s[ix]=Object.assign({},D.s[ix],s);else D.s.push(s);
  persist();clearForm();$("fm").textContent="✓ ተቀምጧል";draw()}
 function draw(){var L=D.s.slice().sort(function(a,b){return calc(b).total-calc(a).total});
  $("lt").innerHTML='<tr><th>#</th><th>ስም</th><th>ቁጥር</th><th>አማካይ</th><th></th></tr>'+L.map(function(s,i){return '<tr><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.id)+'</td><td>'+r2(calc(s).avg)+'</td><td><button class="btn g" style="margin:0;padding:4px 8px" data-e="'+esc(s.id)+'">አርም</button> <button class="btn r" style="margin:0;padding:4px 8px" data-d="'+esc(s.id)+'">ሰርዝ</button></td></tr>'}).join("")}
@@ -148,7 +185,8 @@ $("lt").onclick=function(e){var t=e.target,id=t.getAttribute("data-e"),dl=t.getA
 function exp(){var b=new Blob([JSON.stringify(D)],{type:"application/json"}),a=document.createElement("a");a.href=URL.createObjectURL(b);a.download="nexus-results.json";a.click()}
 function imp(el){var f=el.files[0];if(!f)return;var r=new FileReader();r.onload=function(){try{var d=JSON.parse(r.result);if(d.s){D=d;norm();persist();renderSubs();draw();alert("ተሳክቷል")}}catch(e){alert("ፋይሉ ልክ አይደለም")}};r.readAsText(f)}
 if('serviceWorker' in navigator){navigator.serviceWorker.register('sw.js').catch(function(){})}
-</script><script>
+</script><script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
 var MC=[["w1","Work Sht 1",5],["t1","Test 1",10],["as","Asst",10],["mi","Mid",20],["w2","Work Sht 2",5],["t2","Test 2",10],["qu","Qus",5],["eb","Ex. B'k",10]];
 function mlFill(){var c=$("m_s").value;$("m_s").innerHTML=SUB.map(function(x){return '<option value="'+x[0]+'">'+esc(x[1])+'</option>'}).join("");if(c)$("m_s").value=c;
  var g={};D.s.forEach(function(x){g[x.gr]=1});$("gl").innerHTML=Object.keys(g).map(function(x){return '<option value="'+esc(x)+'">'}).join("")}
@@ -160,7 +198,7 @@ function mlOpen(){var g=$("m_g").value.trim(),k=$("m_s").value+"_"+$("m_q").valu
  if(!L.length){$("mt").innerHTML="";$("mb").classList.add("hide");$("mm").textContent="በዚህ ክፍል ተማሪ የለም። ከታች ጨምር።";return}
  var inp=function(c,m){return '<td><input type="number" min="0" max="'+c[2]+'" data-k="'+c[0]+'" value="'+(m[c[0]]==null?"":m[c[0]])+'" style="width:56px;padding:4px"></td>'};
  $("mt").innerHTML='<tr><th>No</th><th>Name</th><th>Sex</th>'+MC.map(function(c){return '<th>'+c[1]+'<br>('+c[2]+')</th>'}).join("")+'<th>Sub total<br>(75)</th><th>Final<br>(25)</th><th>Total<br>(100)</th></tr>'+
- L.map(function(s,i){var m=(s.ml&&s.ml[k])||{};return '<tr data-i="'+esc(s.id)+'"><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+(s.g==="Male"?"M":"F")+'</td>'+MC.map(function(c){return inp(c,m)}).join("")+'<td class="st"></td>'+inp(["fe","",25],m)+'<td class="tt"></td></tr>'}).join("");
+ L.map(function(s,i){var m=s._m||(s.ml&&s.ml[k])||{};return '<tr data-i="'+esc(s.id)+'"><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+(s.g==="Male"?"M":"F")+'</td>'+MC.map(function(c){return inp(c,m)}).join("")+'<td class="st"></td>'+inp(["fe","",25],m)+'<td class="tt"></td></tr>'}).join("");
  $("mt").oninput=function(e){var t=e.target;if(t.value!==""&&+t.value>+t.max)t.value=t.max;if(+t.value<0)t.value=0;mlCalc()};
  $("mb").classList.remove("hide");$("mm").textContent="";mlCalc()}
 function mlSave(){var k=$("m_s").value+"_"+$("m_q").value,sx=SUB.filter(function(x){return x[0]===$("m_s").value})[0];if(!sx)return;
@@ -174,37 +212,341 @@ function bulk(){var g=$("m_g").value.trim(),n=0;
  if(n){persist();draw();mlFill()}$("bk").value="";$("mm").textContent=n+" ተማሪ ተጨመረ"}
 mlFill();
 </script>
+<script>
+var XH={worksht1:"w1",test1:"t1",asst:"as",mid:"mi",worksht2:"w2",test2:"t2",qus:"qu",exbk:"eb",finalexam:"fe",fe:"fe"};
+function nm(x){return String(x==null?"":x).toLowerCase().replace(/[^a-z0-9]/g,"")}
+function xlExport(){var rows=$("mt").querySelectorAll("tr[data-i]");if(!rows.length){$("mm").textContent="መጀመሪያ ማርክሊስት ክፈት";return}
+ var A=[["No","Student Name","Sex"].concat(MC.map(function(c){return c[1]+" ("+c[2]+")"}),["Sub total (75)","Final Exam (25)","Total (100)"])];
+ rows.forEach(function(r,i){var td=r.querySelectorAll("td"),ip=r.querySelectorAll("input"),a=[i+1,td[1].textContent,td[2].textContent];
+  for(var k=0;k<8;k++)a.push(ip[k].value===""?"":+ip[k].value);a.push(+r.querySelector(".st").textContent,ip[8].value===""?"":+ip[8].value,+r.querySelector(".tt").textContent);A.push(a)});
+ var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(A),"Marklist");XLSX.writeFile(wb,"marklist_"+$("m_g").value.replace(/\s/g,"")+"_"+$("m_s").value+".xlsx")}
+function xlImport(f){if(!f)return;var rows=$("mt").querySelectorAll("tr[data-i]");if(!rows.length){$("mm").textContent="መጀመሪያ ማርክሊስት ክፈት";return}
+ var r=new FileReader();r.onload=function(){try{var wb=XLSX.read(r.result,{type:"array"}),gq=nm($("m_g").value),sn=wb.SheetNames.filter(function(n){return nm(n)===gq})[0]||wb.SheetNames.filter(function(n){return gq&&nm(n).indexOf(gq)>-1})[0]||wb.SheetNames[0],A=XLSX.utils.sheet_to_json(wb.Sheets[sn],{header:1,defval:""}),h=-1,col={};
+  for(var i=0;i<A.length&&h<0;i++){var q=A[i].map(nm);if(q.indexOf("studentname")>-1||q.indexOf("name")>-1||q.indexOf("id")>-1){h=i;q.forEach(function(x,j){if(x==="studentname"||x==="name")col.name=j;else if(x==="id"||x==="registrationnumber")col.id=j;else if(XH[x])col[XH[x]]=j})}}
+  if(h<0){$("mm").textContent="የራስጌ መስመር (Student Name) አልተገኘም።";return}
+  var byN={},byI={};rows.forEach(function(row){var s=D.s.filter(function(x){return x.id===row.dataset.i})[0];byI[row.dataset.i]=row;if(s)byN[nm(s.name)]=row});
+  var ok=0,miss=0;
+  for(var i=h+1;i<A.length;i++){var R=A[i],nmv=col.name!=null?String(R[col.name]).trim():"",row=(col.id!=null&&byI[String(R[col.id]).trim()])||(nmv&&byN[nm(nmv)]);
+   if(!row){if(nmv)miss++;continue}
+   row.querySelectorAll("input").forEach(function(e){var j=col[e.dataset.k];if(j!=null&&R[j]!==""&&!isNaN(+R[j]))e.value=Math.min(+R[j],+e.max)});ok++}
+  mlCalc();$("mm").textContent="✓ ["+sn+"] "+ok+" ተማሪ ተሞልቷል"+(miss?"፣ "+miss+" አልተገኙም (ስማቸውን ያረጋግጡ)":"")+" — «ውጤት አስቀምጥ» ይንኩ"}catch(e){$("mm").textContent="ፋይሉን ማንበብ አልተሳካም"}};r.readAsArrayBuffer(f)}
+function rosterImport(f){if(!f)return;var r=new FileReader();r.onload=function(){try{var wb=XLSX.read(r.result,{type:"array"}),seen={},add=0,skip=[],yr=String($("f_y").value||"2018"),mx=0;
+ D.s.forEach(function(x){var m=/^NX\d+-(\d+)$/.exec(x.id);if(m)mx=Math.max(mx,+m[1])});
+ wb.SheetNames.forEach(function(n){var m=/(\d+)\s*([A-Za-z]?)/.exec(n);if(!m){skip.push(n);return}var gr="Grade "+m[1]+m[2].toUpperCase();
+  if(seen[gr]){skip.push(n);return}seen[gr]=1;
+  var A=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:""}),h=-1,cn=1,cs=2;
+  for(var i=0;i<A.length&&h<0;i++){var q=A[i].map(nm);if(q.indexOf("studentname")>-1){h=i;cn=q.indexOf("studentname");cs=q.indexOf("sex")}}
+  if(h<0){skip.push(n);return}
+  for(var i=h+1;i<A.length;i++){var no=A[i][0],nv=String(A[i][cn]).replace(/\s+/g," ").trim();if(no===""||isNaN(+no)||!nv)continue;
+   if(D.s.some(function(x){return x.gr===gr&&nm(x.name)===nm(nv)}))continue;
+   mx++;D.s.push({id:"NX"+yr.slice(-2)+"-"+String(mx).padStart(4,"0"),name:nv.toUpperCase(),g:/^f/i.test(String(A[i][cs]))?"Female":"Male",gr:gr,y:yr,z:$("f_z").value,w:$("f_w").value,a:{}});add++}});
+ persist();draw();mlFill();$("mm").textContent="✓ "+add+" ተማሪ ተጨመረ"+(skip.length?" — ያልተነበቡ ሉሆች: "+skip.join(", "):"")}catch(e){$("mm").textContent="ፋይሉን ማንበብ አልተሳካም"}};r.readAsArrayBuffer(f)}
+function topL(){var g=$("m_g").value.trim();return D.s.filter(function(x){return!g||x.gr===g}).sort(function(a,b){return calc(b).total-calc(a).total}).slice(0,20)}
+function top20(){$("tt20").innerHTML='<tr><th>#</th><th>Name</th><th>Grade</th><th>Total</th><th>Avg</th></tr>'+topL().map(function(s,i){var c=calc(s);return'<tr><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.gr)+'</td><td>'+r2(c.total)+'</td><td>'+r2(c.avg)+'</td></tr>'}).join("")}
+function topXl(){var A=[["Rank","Name","Grade","Total","Average"]];topL().forEach(function(s,i){var c=calc(s);A.push([i+1,s.name,s.gr,+r2(c.total),+r2(c.avg)])});
+ var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(A),"Top 20");XLSX.writeFile(wb,"top20.xlsx")}
+var card0=card;card=function(s){var h=card0(s),ca="";
+ var rk=s.rk?'<div class="card"><h2>Rank</h2><div class="sum"><div><span>Class Rank</span><b>'+s.rk+' / '+s.cn+'</b></div><div><span>Class</span><b>'+esc(s.gr)+'</b></div>'+(s.br?'<div><span>Branch</span><b>'+esc(s.br)+'</b></div>':'')+(s.rb?'<div><span>Branch Rank</span><b>'+s.rb+' / '+s.nb+'</b></div>':'')+(s.ra?'<div><span>School Rank</span><b>'+s.ra+' / '+s.na+'</b></div>':'')+'</div></div>':'';
+ SUB.forEach(function(x){["1","2"].forEach(function(z){var m=s.ml&&s.ml[x[0]+"_"+z];if(!m)return;
+  ca+='<tr><td>'+esc(x[1])+' (S'+z+')</td>'+MC.map(function(c){return'<td>'+(m[c[0]]==null?"-":m[c[0]])+'</td>'}).join("")+'<td>'+(m.fe==null?"-":m.fe)+'</td></tr>'})});
+ if(ca)ca='<div class="card"><h2>Continuous Assessment</h2><div class="tw"><table><tr><th>Subject</th>'+MC.map(function(c){return'<th>'+c[1]+'</th>'}).join("")+'<th>Final</th></tr>'+ca+'</table></div></div>';
+ var c=calc(s),gc='<div class="card"><h2>Grades</h2><div class="tw"><table><tr><th>Subject</th><th>Score</th><th>Grade</th></tr>'+c.rows.map(function(r){return'<tr><td>'+esc(r.n)+'</td><td>'+r2(r.sc)+'</td><td><b>'+gl(r.sc)+'</b></td></tr>'}).join("")+'<tr><td><b>Average</b></td><td>'+r2(c.avg)+'</td><td><b>'+gl(c.avg)+'</b></td></tr></table></div></div>',ph=s.ph?'<div class="card" style="text-align:center"><img src="'+s.ph+'" style="width:110px;border-radius:8px"></div>':'';
+ return '<div class="card" style="text-align:center"><img src="logo.png" alt="" style="width:72px;height:72px" onerror="this.style.display=\'none\'"><h2 style="margin:6px 0 0">Nexus Academy</h2><div style="color:#667085">Student Result Report</div></div>'+ph+h+gc+rk+ca+'<button class="btn noprint" onclick="window.print()">📄 PDF አውርድ / አትም</button> <button class="btn noprint" onclick="rcPrint()">📘 Report Card (PDF)</button>'};
+</script>
+<script>
+function cmp(a,b){return String(a).localeCompare(String(b),undefined,{numeric:true})}
+function clsAll(){var g={};D.s.forEach(function(x){g[x.gr]=(g[x.gr]||0)+1});(D.cl||[]).forEach(function(c){if(!(c in g))g[c]=0});return g}
+var mf0=mlFill;mlFill=function(){mf0();var k=Object.keys(clsAll()).sort(cmp),v=$("lf").value;
+ $("gl").innerHTML=k.map(function(x){return'<option value="'+esc(x)+'">'}).join("");
+ $("lf").innerHTML='<option value="">ሁሉም ክፍሎች</option>'+k.map(function(x){return'<option value="'+esc(x)+'">'+esc(x)+'</option>'}).join("");$("lf").value=v};
+function rdCl(){var g=clsAll();$("cl").innerHTML=Object.keys(g).sort(cmp).map(function(c){return'<tr><td>'+esc(c)+'</td><td>'+g[c]+'</td>'+brSel(c)+'<td><button class="btn g" style="margin:0;padding:4px 8px" data-r="'+esc(c)+'">ስም ቀይር</button> <button class="btn r" style="margin:0;padding:4px 8px" data-k="'+esc(c)+'">ሰርዝ</button></td></tr>'}).join("")}
+draw=function(){mlFill();var f=$("lf").value,q=$("lq").value.trim().toLowerCase();
+ var L=D.s.filter(function(s){return(!f||s.gr===f)&&(!q||s.name.toLowerCase().indexOf(q)>-1||s.id.toLowerCase().indexOf(q)>-1)}).sort(function(a,b){return cmp(a.gr,b.gr)||calc(b).total-calc(a).total});
+ $("lc").textContent="("+L.length+")";
+ $("lt").innerHTML='<tr><th>#</th><th>ስም</th><th>ክፍል</th><th>ቁጥር</th><th>አማካይ</th><th></th></tr>'+L.slice(0,100).map(function(s,i){return'<tr><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.gr)+'</td><td>'+esc(s.id)+'</td><td>'+r2(calc(s).avg)+'</td><td><button class="btn g" style="margin:0;padding:4px 8px" data-e="'+esc(s.id)+'">አርም</button> <button class="btn r" style="margin:0;padding:4px 8px" data-d="'+esc(s.id)+'">ሰርዝ</button></td></tr>'}).join("")+(L.length>100?'<tr><td colspan="6">የመጀመሪያዎቹ 100 ብቻ ይታያሉ — ክፍል ይምረጡ ወይም ይፈልጉ።</td></tr>':"");
+ rdCl()};
+function clDone(m){persist();draw();$("cm").textContent=m}
+function addCl(){var n=$("cn").value.trim();if(!n)return;if(n in clsAll()){$("cm").textContent="ይህ ክፍል ቀድሞ አለ።";return}D.cl.push(n);$("cn").value="";clDone("✓ ክፍል ተጨምሯል")}
+$("cl").onclick=function(e){var r=e.target.getAttribute("data-r"),k=e.target.getAttribute("data-k"),g=clsAll();
+ if(r){var n=(prompt("አዲስ የክፍል ስም (ነባር ክፍል ከሆነ ይዋሃዳሉ):",r)||"").trim();if(!n||n===r)return;
+  D.s.forEach(function(x){if(x.gr===r)x.gr=n});if(D.cb[r]){D.cb[n]=D.cb[n]||D.cb[r];delete D.cb[r]}D.cl=D.cl.filter(function(c){return c!==r});if(D.cl.indexOf(n)<0)D.cl.push(n);clDone("✓ ስሙ ተቀይሯል ("+g[r]+" ተማሪ)")}
+ if(k){var N=g[k]||0,t="";
+  if(N){t=(prompt(k+" ውስጥ "+N+" ተማሪ አሉ። የሚዘዋወሩበትን ክፍል ስም ያስገቡ። ባዶ ከተዉ ተማሪዎቹ ይሰረዛሉ።","")||"").trim();
+   if(t){D.s.forEach(function(x){if(x.gr===k)x.gr=t});if(D.cl.indexOf(t)<0)D.cl.push(t)}
+   else if(confirm(N+" ተማሪዎች ከውጤታቸው ጋር ይሰረዙ? ይህ አይመለስም።"))D.s=D.s.filter(function(x){return x.gr!==k});else return}
+  else if(!confirm(k+" ይሰረዝ?"))return;
+  delete D.cb[k];D.cl=D.cl.filter(function(c){return c!==k});clDone("✓ ክፍሉ ተሰርዟል")}};
+mlFill();
+</script>
+<script>
+function gl(x){var t=(window.GSV||D.gs||"90:A,80:B,70:C,60:D,50:E,0:F").split(",").map(function(p){var a=p.split(":");return[+a[0],(a[1]||"").trim()]}).sort(function(a,b){return b[0]-a[0]});for(var i=0;i<t.length;i++)if(x>=t[i][0])return t[i][1];return"-"}
+function setGs(){var v=$("gs").value.replace(/\s/g,"");if(!/^(\d+(\.\d+)?:[A-Za-z+\-]{1,3})(,\d+(\.\d+)?:[A-Za-z+\-]{1,3})*$/.test(v)||!/(^|,)0:/.test(v)){$("cm").textContent="ምሳሌ: 97:A,90:B,80:C,70:D,60:E,0:F (0 ያለው መስመር ያስፈልጋል)";return}
+ D.gs=v;persist();$("cm").textContent="✓ የውጤት ደረጃ ተቀምጧል"}
+function phPick(f){if(!f)return;var im=new Image();im.onload=function(){var c=document.createElement("canvas"),k=Math.min(1,160/Math.max(im.width,im.height));c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext("2d").drawImage(im,0,0,c.width,c.height);window.PH=c.toDataURL("image/jpeg",.6);$("fm").textContent="✓ ፎቶ ተመርጧል — «አስቀምጥ» ይንኩ"};im.src=URL.createObjectURL(f)}
+function idCards(){var f=$("lf").value;if(!f){alert("መጀመሪያ ክፍል ይምረጡ");return}
+ $("idp").innerHTML=D.s.filter(function(x){return x.gr===f}).sort(function(a,b){return a.name.localeCompare(b.name)}).map(function(s){return'<div class="idc"><img src="logo.png" alt="" style="height:20px;vertical-align:middle;margin-right:4px"><b>NEXUS ACADEMY</b> — Student ID<div class="idr"><div class="idph">'+(s.ph?'<img src="'+s.ph+'">':'')+'</div><div><b>'+esc(s.name)+'</b><br>ID: <b>'+esc(s.id)+'</b><br>Grade: '+esc(s.gr)+(s.br?'<br>Branch: '+esc(s.br):'')+'<br>Year: '+esc(s.y||"")+'</div></div></div>'}).join("");
+ document.body.classList.add("pid");window.onafterprint=function(){document.body.classList.remove("pid")};window.print()}
+</script>
+<div id="idp"></div>
+<script>
+function brSel(c){var cur=(D.cb||{})[c]||{};return'<td><select data-m="'+esc(c)+'" style="padding:4px"><option value="">—</option>'+(window.BRL||[]).map(function(b){return'<option value="'+b.id+'"'+(cur.id===b.id?' selected':'')+'>'+esc(b.name)+'</option>'}).join("")+'</select></td>'}
+$("cl").onchange=function(e){var c=e.target.getAttribute("data-m");if(c===null)return;var b=(window.BRL||[]).filter(function(x){return x.id===e.target.value})[0];if(b)D.cb[c]={id:b.id,name:b.name};else delete D.cb[c];clDone(b?"✓ "+c+" → "+b.name:"✓ ቅርንጫፍ ተወግዷል")};
+var mf2=mlFill;mlFill=function(){mf2();var v=$("t_s").value,bn={};Object.keys(D.cb||{}).forEach(function(k){bn[D.cb[k].name]=1});
+ $("t_s").innerHTML='<option value="all">ሁሉም ቅርንጫፍ (አጠቃላይ)</option>'+Object.keys(bn).sort().map(function(x){return'<option value="b:'+esc(x)+'">ቅርንጫፍ: '+esc(x)+'</option>'}).join("")+Object.keys(clsAll()).sort(cmp).map(function(x){return'<option value="c:'+esc(x)+'">ክፍል: '+esc(x)+'</option>'}).join("");if(v)$("t_s").value=v};
+topL=function(){var v=$("t_s").value||"all";return D.s.filter(function(x){return v==="all"||(v.indexOf("b:")===0?x.br===v.slice(2):x.gr===v.slice(2))}).sort(function(a,b){return calc(b).avg-calc(a).avg}).slice(0,20)};
+top20=function(){$("tt20").innerHTML='<tr><th>#</th><th>Name</th><th>Class</th><th>Branch</th><th>Avg</th></tr>'+topL().map(function(s,i){return'<tr><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.gr)+'</td><td>'+esc(s.br||"-")+'</td><td>'+r2(calc(s).avg)+'</td></tr>'}).join("")};
+topXl=function(){var A=[["Rank","Name","Class","Branch","Average"]];topL().forEach(function(s,i){A.push([i+1,s.name,s.gr,s.br||"",+r2(calc(s).avg)])});var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(A),"Top 20");XLSX.writeFile(wb,"top20.xlsx")};
+mlFill();
+</script>
+<script>
+function rcHtml(s,S){
+ var sum=function(m){if(!m)return null;var t=0;for(var k in m)t+=m[k];return t};
+ var rows=S.map(function(x){var a=sum(s.ml&&s.ml[x[0]+"_1"]),b=sum(s.ml&&s.ml[x[0]+"_2"]),v=[a,b].filter(function(z){return z!=null}),
+  avg=v.length?v.reduce(function(p,q){return p+q},0)/v.length:(s.a&&s.a[x[0]]!=null?s.a[x[0]]/x[2]*100:null);return{n:x[1],a:a,b:b,avg:avg}});
+ var got=rows.filter(function(r){return r.avg!=null}),tot=got.reduce(function(p,r){return p+r.avg},0),av=got.length?tot/got.length:0,f=function(v){return v==null?"-":r2(v)};
+ return'<div class="tmp" style="padding:16px;color:#000;background:#fff;font-size:12px;font-family:system-ui,sans-serif">'
+ +'<div style="display:flex;align-items:center;gap:12px;border-bottom:3px double #1d4ed8;padding-bottom:8px"><img src="logo.png" alt="" style="height:70px"><div style="flex:1;text-align:center"><div style="font-size:22px;font-weight:800;color:#1e3a8a">NEXUS ACADEMY</div><div style="font-size:15px;font-weight:700">STUDENT REPORT CARD</div><div>Academic Year '+esc(s.y||"")+'</div></div>'+(s.ph?'<img src="'+s.ph+'" alt="" style="height:80px;border:1px solid #888">':'<div style="width:64px;height:80px;border:1px solid #888"></div>')+'</div>'
+ +'<table style="width:100%;margin:10px 0" cellpadding="3"><tr><td><b>Name:</b> '+esc(s.name)+'</td><td><b>ID:</b> '+esc(s.id)+'</td></tr><tr><td><b>Sex:</b> '+esc(s.g)+'</td><td><b>Class:</b> '+esc(s.gr)+(s.br?' &nbsp; <b>Branch:</b> '+esc(s.br):'')+'</td></tr></table>'
+ +'<table style="width:100%;border-collapse:collapse;text-align:center" border="1" cellpadding="5"><tr style="background:#e8eefc"><th style="text-align:left">Subject</th><th>Semester I<br>(100)</th><th>Semester II<br>(100)</th><th>Average</th><th>Grade</th></tr>'
+ +rows.map(function(r){return'<tr><td style="text-align:left">'+esc(r.n)+'</td><td>'+f(r.a)+'</td><td>'+f(r.b)+'</td><td><b>'+f(r.avg)+'</b></td><td><b>'+(r.avg==null?"-":gl(r.avg))+'</b></td></tr>'}).join("")
+ +'<tr style="background:#f3f4f6"><td style="text-align:left"><b>Total</b></td><td colspan="2"></td><td><b>'+r2(tot)+'</b></td><td></td></tr><tr style="background:#f3f4f6"><td style="text-align:left"><b>Average</b></td><td colspan="2"></td><td><b>'+r2(av)+'</b></td><td><b>'+gl(av)+'</b></td></tr></table>'
+ +'<table style="width:100%;margin:10px 0" cellpadding="3"><tr><td><b>Class Rank:</b> '+(s.rk?s.rk+' / '+s.cn:'-')+'</td><td><b>Branch Rank:</b> '+(s.rb?s.rb+' / '+s.nb:'-')+'</td><td><b>School Rank:</b> '+(s.ra?s.ra+' / '+s.na:'-')+'</td></tr><tr><td colspan="3"><b>Result:</b> '+(got.length?(av>=50?"PASSED":"FAILED"):"-")+'</td></tr></table>'
+ +'<div style="margin-top:14px">Remarks: ________________________________________________</div>'
+ +'<div style="display:flex;justify-content:space-between;margin-top:34px"><span>Homeroom Teacher: ____________</span><span>Director: ____________</span><span>Parent: ____________</span></div>'
+ +'<div style="margin-top:14px;font-size:10px;color:#555;text-align:center">Nexus Academy · Wolkite · +251 944 299 218 · NexusAcademy2127@gmail.com</div></div>'}
+function rcShow(h){$("idp").innerHTML=h;document.body.classList.add("pid");window.onafterprint=function(){document.body.classList.remove("pid")};window.print()}
+function rcPrint(){rcShow(rcHtml(window.CBS,window.SUBV||SUB))}
+function rcClass(){var g=$("m_g").value.trim(),L=D.s.filter(function(x){return x.gr===g}).sort(function(a,b){return a.name.localeCompare(b.name)});
+ if(!L.length){$("mm").textContent="በዚህ ክፍል ተማሪ የለም።";return}rcShow(L.map(function(s){return rcHtml(s,SUB)}).join(""))}
+</script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import{getAuth,signInWithEmailAndPassword,signOut,sendPasswordResetEmail}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
-import{getFirestore,doc,getDoc,getDocs,collection,writeBatch}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import{getAuth,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,createUserWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{getFirestore,doc,getDoc,getDocs,collection,writeBatch,setDoc,deleteDoc,query,where,addDoc,updateDoc}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 // ↓↓ ከ Firebase Console ኮፒ አድርገህ እነዚህን ሁለት እሴቶች ተካ ↓↓
-var app=initializeApp({apiKey:"PASTE_API_KEY",authDomain:"nexus-academy-b4efc.firebaseapp.com",projectId:"nexus-academy-b4efc",appId:"PASTE_APP_ID"});
+var CFG={apiKey:"AIzaSyAqle_Bp56Im69br-0cPLa1HVZIPNgsD2Y",authDomain:"nexus-academy-b4efc.firebaseapp.com",projectId:"nexus-academy-b4efc",storageBucket:"nexus-academy-b4efc.firebasestorage.app",messagingSenderId:"1056627396241",appId:"1:1056627396241:web:efaeadb54080f45390f930"},app=initializeApp(CFG);
 var auth=getAuth(app),db=getFirestore(app),ids=new Set(),pct0=window.pct,_t;
 window.pct=function(s){return s.pc!=null?s.pc:pct0(s)};
 var toSub=function(c){return c.sub.map(function(o){return[o.k,o.n,o.m]})};
-async function syncAll(){var b=writeBatch(db);
- D.s.forEach(function(s){s.pc=pct0(s);b.set(doc(db,"students",s.id),s)});
- ids.forEach(function(i){if(!D.s.some(function(x){return x.id===i}))b.delete(doc(db,"students",i))});
- b.set(doc(db,"config","subjects"),{sub:D.sub.map(function(x){return{k:x[0],n:x[1],m:x[2]}})});
- await b.commit();ids=new Set(D.s.map(function(x){return x.id}))}
+var last={};
+async function syncAll(){var ops=[],nl={};
+ var g={};D.s.forEach(function(s){(g[s.gr]=g[s.gr]||[]).push(s)});
+ Object.keys(g).forEach(function(k){var L=g[k].slice().sort(function(a,c){return calc(c).total-calc(a).total});L.forEach(function(s,i){s.rk=i>0&&calc(s).total===calc(L[i-1]).total?L[i-1].rk:i+1;s.cn=L.length})});
+ D.s.forEach(function(s){var b=D.cb&&D.cb[s.gr];if(b)s.br=b.name;else delete s.br});
+ var rk2=function(L,a,n){L.sort(function(x,y){return calc(y).avg-calc(x).avg});L.forEach(function(s,i){s[a]=i>0&&calc(s).avg===calc(L[i-1]).avg?L[i-1][a]:i+1;s[n]=L.length})};
+ rk2(D.s.slice(),"ra","na");var bg={};D.s.forEach(function(s){if(s.br)(bg[s.br]=bg[s.br]||[]).push(s);else{delete s.rb;delete s.nb}});Object.keys(bg).forEach(function(k){rk2(bg[k],"rb","nb")});
+ D.s.forEach(function(s){s.pc=pct0(s);var j=JSON.stringify(s);if(last[s.id]!==j){nl[s.id]=j;ops.push(function(b){b.set(doc(db,"students",s.id),s)})}});
+ ids.forEach(function(i){if(!D.s.some(function(x){return x.id===i}))ops.push(function(b){b.delete(doc(db,"students",i))})});
+ ops.push(function(b){b.set(doc(db,"config","grades"),{gs:D.gs})});
+ ops.push(function(b){b.set(doc(db,"config","classes"),{list:D.cl||[],map:D.cb||{}})});
+ ops.push(function(b){b.set(doc(db,"config","subjects"),{sub:D.sub.map(function(x){return{k:x[0],n:x[1],m:x[2]}})})});
+ for(var i=0;i<ops.length;i+=400){var b=writeBatch(db);ops.slice(i,i+400).forEach(function(o){o(b)});await b.commit()}
+ Object.keys(nl).forEach(function(k){last[k]=nl[k]});ids.forEach(function(i){if(!D.s.some(function(x){return x.id===i}))delete last[i]});
+ ids=new Set(D.s.map(function(x){return x.id}))}
 window.persist=function(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}
- if(auth.currentUser){clearTimeout(_t);_t=setTimeout(function(){syncAll().catch(function(e){alert("ዳታቤዝ ማስቀመጥ አልተሳካም: "+e.code)})},600)}};
+ if(auth.currentUser&&isAdm){clearTimeout(_t);_t=setTimeout(function(){syncAll().catch(function(e){alert("ዳታቤዝ ማስቀመጥ አልተሳካም: "+e.code)})},600)}};
 window.look=async function(){var q=$("rq").value.trim();$("rm").textContent="";$("res").innerHTML="";if(!q)return;
- try{var r=await Promise.all([getDoc(doc(db,"students",q)),getDoc(doc(db,"config","subjects"))]);
+ try{var r=await Promise.all([getDoc(doc(db,"students",q)),getDoc(doc(db,"config","subjects")),getDoc(doc(db,"config","grades")),getDoc(doc(db,"config","directory"))]);if(r[2].exists())window.GSV=r[2].data().gs;DIR=r[3].exists()?r[3].data().t:[];
   if(!r[0].exists()){$("rm").textContent="ይህ የምዝገባ ቁጥር አልተገኘም።";return}
-  var keep=SUB;if(r[1].exists())SUB=toSub(r[1].data());
-  try{$("res").innerHTML=card(r[0].data())}finally{SUB=keep}}
+  var keep=SUB;if(r[1].exists())SUB=toSub(r[1].data());window.SUBV=SUB;
+  try{$("res").innerHTML=card(r[0].data())+cbox();window.CBS=r[0].data();loadCbl();loadMat();loadNtS()}finally{SUB=keep}}
  catch(e){$("rm").textContent="ግንኙነት አልተሳካም። ኢንተርኔት ያረጋግጡ።"}};
 window.login=async function(){$("lm").textContent="";
  try{await signInWithEmailAndPassword(auth,$("em").value.trim(),$("pin").value)}
- catch(e){$("lm").textContent="ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም።";return}
- try{var ss=await getDocs(collection(db,"students")),cf=await getDoc(doc(db,"config","subjects"));
+ catch(e){$("lm").textContent=(/invalid-(login|credential)|wrong-password|user-not-found/.test(e.code)?"ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም።":"ስህተት: "+e.code);return}
+ isAdm=auth.currentUser.email.toLowerCase()===ADMIN;ME=null;
+ if(!isAdm){try{isAdm=(await getDoc(doc(db,"admins",auth.currentUser.uid))).exists()}catch(e){}}
+ if(!isAdm){var sd=await getDoc(doc(db,"staff",auth.currentUser.uid));if(!sd.exists()){await signOut(auth);$("lm").textContent="ይህ መለያ በ Admin አልተመዘገበም።";return}ME=sd.data()}
+ try{var ss=await getDocs(collection(db,"students")),cf=await getDoc(doc(db,"config","subjects")),cc=await getDoc(doc(db,"config","classes")),cg=await getDoc(doc(db,"config","grades")),cs=await getDoc(doc(db,"config","sem"));SM=cs.exists()?cs.data():{"1":true,"2":true};
   if(ss.empty&&D.s.length&&confirm("ዳታቤዙ ባዶ ነው። በዚህ ስልክ ላይ ያሉ "+D.s.length+" ተማሪዎች ወደ ዳታቤዝ ይጫኑ?")){ids=new Set();await syncAll()}
-  else{D={s:ss.docs.map(function(d){return d.data()}),sub:cf.exists()?toSub(cf.data()):null,v:2};norm();ids=new Set(D.s.map(function(x){return x.id}))}
-  renderSubs();$("lg").classList.add("hide");$("tp").classList.remove("hide");draw()}
+  else{D={s:ss.docs.map(function(d){return d.data()}),sub:cf.exists()?toSub(cf.data()):null,cl:cc.exists()?cc.data().list:[],cb:cc.exists()?(cc.data().map||{}):{},gs:cg.exists()?cg.data().gs:null,v:2};norm();ids=new Set(D.s.map(function(x){return x.id}));last={};D.s.forEach(function(s){last[s.id]=JSON.stringify(s)})}
+  renderSubs();$("lg").classList.add("hide");$("tp").classList.remove("hide");draw();
+  document.body.classList.toggle("tch",!isAdm);mlFill();loadCp();loadInbox();loadRp();loadMc();loadLv();loadDc();loadDp();loadNt();if(isAdm){$("ad").classList.remove("hide");loadAd()}else $("ad").classList.add("hide")}
  catch(e){$("lm").textContent="ዳታ ማንበብ አልተሳካም: "+e.code}};
-var out0=window.out;window.out=function(){out0();signOut(auth)};
+var out0=window.out;window.out=function(){out0();$("ad").classList.add("hide");signOut(auth)};
 window.chPin=function(){sendPasswordResetEmail(auth,auth.currentUser.email).then(function(){alert("የይለፍ ቃል መቀየሪያ ኢሜይል ተልኳል")}).catch(function(e){alert(e.code)})};
+
+var ADMIN="denekewbamlaku2127@gmail.com",BR=[],ST=[],AD=[];
+function rdAd(){var bn=function(id){return(BR.filter(function(b){return b.id===id})[0]||{}).name||"-"};
+ $("bl").innerHTML=BR.map(function(b){return'<tr><td>'+esc(b.name)+'</td><td><button class="btn r" style="margin:0;padding:4px 8px" data-b="'+b.id+'">ሰርዝ</button></td></tr>'}).join("")||'<tr><td>ቅርንጫፍ የለም</td></tr>';
+ $("tb").innerHTML=BR.map(function(b){return'<option value="'+b.id+'">'+esc(b.name)+'</option>'}).join("");
+ $("tl").innerHTML=ST.map(function(t){return'<tr><td>'+esc(t.name)+'<br><small>'+esc(t.email)+'</small></td><td>'+esc(t.role)+'<br>'+esc(bn(t.branch))+'</td><td>'+esc(t.subjects||"")+'</td><td><button class="btn r" style="margin:0;padding:4px 8px" data-s="'+t.id+'">ሰርዝ</button></td></tr>'}).join("")}
+async function loadAd(){try{var b=await getDocs(collection(db,"branches")),t=await getDocs(collection(db,"staff")),a=await getDocs(collection(db,"admins"));AD=a.docs.map(function(d){return Object.assign({id:d.id},d.data())});
+ BR=b.docs.map(function(d){return Object.assign({id:d.id},d.data())});ST=t.docs.map(function(d){return Object.assign({id:d.id},d.data())});rdAd()}
+ catch(e){$("am").textContent="ስህተት: "+e.code+" (Rules ን ያትሙ)"}}
+window.addBr=async function(){var n=$("bn").value.trim();if(!n)return;
+ try{await setDoc(doc(collection(db,"branches")),{name:n});$("bn").value="";$("am").textContent="✓ ቅርንጫፍ ተጨምሯል";loadAd()}catch(e){$("am").textContent="ስህተት: "+e.code}};
+window.addStaff=async function(){var n=$("tn").value.trim(),m=$("te").value.trim().toLowerCase(),p=$("tp").value;
+ if(!n||!m||p.length<8||!$("tb").value){$("am").textContent="ስም፣ ኢሜይል፣ ቅርንጫፍ እና የይለፍ ቃል (ቢያንስ 8) ያስገቡ።";return}
+ try{var a2=getAuth(initializeApp(CFG,"s"+Date.now())),c=await createUserWithEmailAndPassword(a2,m,p);await signOut(a2);
+  await setDoc(doc(db,"staff",c.user.uid),{name:n,email:m,role:$("tr").value,branch:$("tb").value,subjects:$("ts").value.trim()});
+  ["tn","te","tp","ts"].forEach(function(k){$(k).value=""});$("am").textContent="✓ መምህር ተጨምሯል";loadAd()}
+ catch(e){$("am").textContent=e.code==="auth/email-already-in-use"?"ይህ ኢሜይል ቀድሞ አለ።":"ስህተት: "+e.code}};
+$("bl").onclick=async function(e){var i=e.target.getAttribute("data-b");if(i&&confirm("ቅርንጫፉ ይሰረዝ?")){await deleteDoc(doc(db,"branches",i));loadAd()}};
+$("tl").onclick=async function(e){var i=e.target.getAttribute("data-s");if(i&&confirm("ከዝርዝሩ ይወገድ? (መለያው በ Firebase Users ውስጥ ይቀራል)")){await deleteDoc(doc(db,"staff",i));loadAd()}};
+
+var ME=null,isAdm=false;
+function subKeys(t){var o=[],bad=[];t.split(",").forEach(function(x){x=x.trim();if(!x)return;var y=SUB.filter(function(z){return nm(z[1])===nm(x)})[0];y?o.push(y[0]):bad.push(x)});return{out:o,bad:bad}}
+window.addStaff=async function(){var n=$("tn").value.trim(),m=$("te").value.trim().toLowerCase(),p=$("tp").value,sk=subKeys($("ts").value),cl=$("tc").value.split(",").map(function(x){return x.trim()}).filter(Boolean);
+ if(!n||!m||p.length<8||!$("tb").value){$("am").textContent="ስም፣ ኢሜይል፣ ቅርንጫፍ እና የይለፍ ቃል (ቢያንስ 8) ያስገቡ።";return}
+ if(sk.bad.length){$("am").textContent="ያልታወቀ ትምህርት: "+sk.bad.join(", ")+" (ስሙ ከትምህርቶች ዝርዝር ጋር አንድ ይሁን)";return}
+ try{var a2=getAuth(initializeApp(CFG,"s"+Date.now())),c=await createUserWithEmailAndPassword(a2,m,p);await signOut(a2);
+  await setDoc(doc(db,"staff",c.user.uid),{name:n,email:m,role:$("tr").value,branch:$("tb").value,subjects:$("ts").value.trim(),sub:sk.out,cls:cl});
+  ["tn","te","tp","ts","tc"].forEach(function(k){$(k).value=""});$("am").textContent="✓ መምህር ተጨምሯል";loadAd()}
+ catch(e){$("am").textContent=e.code==="auth/email-already-in-use"?"ይህ ኢሜይል ቀድሞ አለ።":"ስህተት: "+e.code}};
+var mf1=window.mlFill;window.mlFill=function(){mf1();if(!isAdm&&ME){var c=$("m_s").value;
+ $("m_s").innerHTML=SUB.filter(function(x){return(ME.sub||[]).indexOf(x[0])>-1}).map(function(x){return'<option value="'+x[0]+'">'+esc(x[1])+'</option>'}).join("");if(c)$("m_s").value=c;
+ $("gl").innerHTML=(ME.cls||[]).map(function(x){return'<option value="'+esc(x)+'">'}).join("")}};
+var mlOpen0=window.mlOpen;
+window.mlOpen=async function(){var g=$("m_g").value.trim(),sub=$("m_s").value,sem=$("m_q").value;
+ if(!isAdm&&((ME.cls||[]).indexOf(g)<0||(ME.sub||[]).indexOf(sub)<0)){$("mm").textContent="ይህ ክፍል ወይም ትምህርት አልተመደበልዎትም።";return}
+ var L=D.s.filter(function(x){return x.gr===g});$("mm").textContent="እየጫነ...";
+ var R=await Promise.all(L.map(function(s){return getDoc(doc(db,"marks",s.id+"_"+sub+"_"+sem)).catch(function(){return null})}));
+ L.forEach(function(s,i){if(R[i]&&R[i].exists())s._m=R[i].data().m});
+ mlOpen0();L.forEach(function(s){delete s._m})};
+window.mlSave=async function(){var sub=$("m_s").value,sem=$("m_q").value,g=$("m_g").value.trim(),uid=auth.currentUser.uid,jobs=[];if(!isAdm&&SM[sem]===false){$("mm").textContent="ይህ ሴሚስተር ዝግ ነው።";return}
+ if(!isAdm&&((ME.cls||[]).indexOf(g)<0||(ME.sub||[]).indexOf(sub)<0)){$("mm").textContent="ፈቃድ የለዎትም።";return}
+ $("mt").querySelectorAll("tr[data-i]").forEach(function(r){var m={};r.querySelectorAll("input").forEach(function(e){if(e.value!=="")m[e.dataset.k]=+e.value});
+  jobs.push(setDoc(doc(db,"marks",r.dataset.i+"_"+sub+"_"+sem),{sid:r.dataset.i,cls:g,sub:sub,sem:sem,m:m,by:uid,at:Date.now()}))});
+ try{await Promise.all(jobs);$("mm").textContent="✓ "+jobs.length+" ውጤት ተቀምጧል"+(isAdm?" — ለተማሪዎች ለማሳየት «ውጤት አትም» ይንኩ":"")}catch(e){$("mm").textContent="ስህተት: "+e.code}};
+window.pubCl=async function(){var g=$("m_g").value.trim(),sem=$("m_q").value;if(!g)return;$("mm").textContent="እየታተመ...";
+ try{var q=await getDocs(query(collection(db,"marks"),where("cls","==",g),where("sem","==",sem))),n=0;
+  q.docs.forEach(function(d){var x=d.data(),s=D.s.filter(function(y){return y.id===x.sid})[0],sx=SUB.filter(function(y){return y[0]===x.sub})[0];if(!s||!sx)return;
+   var t=0;for(var k in x.m)t+=x.m[k];s.ml=s.ml||{};s.ml[x.sub+"_"+sem]=x.m;s.a[x.sub]=Math.round(t/100*sx[2]);n++});
+  persist();draw();$("mm").textContent="✓ "+n+" ውጤት ታትሟል — ተማሪዎች ማየት ይችላሉ"}catch(e){$("mm").textContent="ስህተት: "+e.code}};
+
+var rd0=rdAd;rdAd=function(){rd0();window.BRL=BR;rdCl();$("sm1").checked=SM["1"]!==false;$("sm2").checked=SM["2"]!==false;setDoc(doc(db,"config","directory"),{t:ST.map(function(x){return{id:x.id,n:x.name,s:x.subjects||""}})}).catch(function(){});var me=auth.currentUser.uid;
+ $("al").innerHTML='<tr><td>'+esc(ADMIN)+'<br><small>ዋና Admin</small></td><td></td></tr>'+AD.map(function(a){return'<tr><td>'+esc(a.name)+'<br><small>'+esc(a.email)+'</small></td><td>'+(a.id===me?'(እርስዎ)':'<button class="btn r" style="margin:0;padding:4px 8px" data-a="'+a.id+'">አስወግድ</button>')+'</td></tr>'}).join("")};
+window.addAdm=async function(){var n=$("an").value.trim(),m=$("ae").value.trim().toLowerCase(),p=$("ap").value;
+ if(!n||!m||p.length<8){$("aam").textContent="ስም፣ ኢሜይል እና የይለፍ ቃል (ቢያንስ 8) ያስገቡ።";return}
+ var done=function(uid){return setDoc(doc(db,"admins",uid),{name:n,email:m}).then(function(){["an","ae","ap"].forEach(function(k){$(k).value=""});$("aam").textContent="✓ Admin ተጨምሯል";loadAd()})};
+ try{var a2=getAuth(initializeApp(CFG,"a"+Date.now())),c=await createUserWithEmailAndPassword(a2,m,p);await signOut(a2);await done(c.user.uid)}
+ catch(e){if(e.code==="auth/email-already-in-use"){var t=ST.filter(function(x){return x.email===m})[0];
+   if(t){if(confirm(t.name+" ቀድሞ መምህር ነው። Admin ይደረግ? (አሁን ያለው የይለፍ ቃሉ ይቀጥላል)"))await done(t.id)}
+   else $("aam").textContent="ይህ ኢሜይል በ Firebase ቀድሞ አለ። በ Authentication → Users ውስጥ ሰርዘህ እንደገና ጨምር።"}
+  else $("aam").textContent="ስህተት: "+e.code}};
+$("al").onclick=async function(e){var i=e.target.getAttribute("data-a");if(i&&confirm("የ Admin መብቱ ይወገድ? (መለያው ይቀራል)")){try{await deleteDoc(doc(db,"admins",i));loadAd()}catch(x){$("aam").textContent="ስህተት: "+x.code}}};
+
+var SM={"1":true,"2":true},DIR=[];
+window.setSm=async function(){SM={"1":$("sm1").checked,"2":$("sm2").checked};try{await setDoc(doc(db,"config","sem"),SM);$("am").textContent="✓ ሴሚስተር ቅንብር ተቀምጧል"}catch(e){$("am").textContent="ስህተት: "+e.code}};
+function cbox(){return'<div class="card noprint hide" id="ntS_c"><h2>📢 ማስታወቂያ</h2><div id="ntS_l"></div></div><div class="card noprint hide" id="mat_c"><h2>📚 Materials</h2><div id="mat_l"></div></div><div class="card noprint"><h2>ቅሬታ / ጥያቄ ማቅረቢያ</h2><label>ለማን</label><select id="cb_to"><option value="admin">ለትምህርት ቤቱ አስተዳደር</option>'+DIR.map(function(t){return'<option value="'+esc(t.id)+'" data-n="'+esc(t.n)+'">'+esc(t.n)+(t.s?" — "+esc(t.s):"")+'</option>'}).join("")+'</select><label>መልእክት</label><textarea id="cb_tx" rows="4" maxlength="600" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn" onclick="sendCb()">ላክ</button><div id="cb_m" class="msg"></div><div id="cb_l"></div></div>'}
+window.sendCb=async function(){var s=window.CBS,t=$("cb_tx").value.trim(),to=$("cb_to").value;if(t.length<5){$("cb_m").textContent="መልእክቱን ያስገቡ።";return}
+ try{var r=await addDoc(collection(db,"complaints"),{sid:s.id,sname:s.name,cls:s.gr,to:to,toName:to==="admin"?"Admin":$("cb_to").selectedOptions[0].getAttribute("data-n"),text:t,status:"new",reply:"",at:Date.now()});
+  var L=JSON.parse(localStorage.getItem("nx_cb")||"[]");L.push(r.id);localStorage.setItem("nx_cb",JSON.stringify(L.slice(-20)));$("cb_tx").value="";$("cb_m").textContent="✓ ተልኳል";loadCbl()}
+ catch(e){$("cb_m").textContent="ስህተት: "+e.code}};
+async function loadCbl(){var s=window.CBS,L=JSON.parse(localStorage.getItem("nx_cb")||"[]"),h="";
+ for(var i=L.length-1;i>=0;i--){try{var d=await getDoc(doc(db,"complaints",L[i]));if(!d.exists())continue;var c=d.data();if(c.sid!==s.id)continue;
+  h+='<div style="border-top:1px solid var(--bd);padding:8px 0"><small>ለ '+esc(c.toName)+' · '+new Date(c.at).toLocaleDateString()+'</small><br>'+esc(c.text)+'<br><b>'+(c.reply?'ምላሽ: '+esc(c.reply):'⏳ ገና አልተመለሰም')+'</b></div>'}catch(e){}}
+ if($("cb_l"))$("cb_l").innerHTML=h}
+window.loadCp=async function(){if(!auth.currentUser)return;try{var q=isAdm?collection(db,"complaints"):query(collection(db,"complaints"),where("to","==",auth.currentUser.uid)),r=await getDocs(q),L=r.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return b.at-a.at});
+ var n=L.filter(function(c){return!c.reply}).length;$("cc").textContent="("+n+" አዲስ)";
+ $("cl2").innerHTML=L.map(function(c){return'<div style="border:1px solid var(--bd);border-radius:10px;padding:10px;margin:8px 0"><b>'+esc(c.sname)+'</b> ('+esc(c.cls)+') → '+esc(c.toName)+' · '+new Date(c.at).toLocaleDateString()+'<br>'+esc(c.text)+'<br>'+(c.reply?'<b>ምላሽ: '+esc(c.reply)+'</b>':'<textarea id="rp_'+c.id+'" rows="2" style="width:100%;padding:8px;margin-top:6px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn" style="margin:4px 0 0;padding:6px 12px" data-c="'+c.id+'">ምላሽ ላክ</button>')+'</div>'}).join("")||'<div class="msg">ቅሬታ የለም።</div>'}
+ catch(e){$("cl2").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}};
+$("cl2").onclick=async function(e){var id=e.target.getAttribute("data-c");if(!id)return;var t=$("rp_"+id).value.trim();if(!t)return;
+ try{await updateDoc(doc(db,"complaints",id),{reply:t,status:"replied",rat:Date.now()});loadCp()}catch(x){alert("ስህተት: "+x.code)}};
+
+window.tmpCards=async function(){var g=$("m_g").value.trim(),sem=$("m_q").value;if(!g){$("mm").textContent="ክፍል ያስገቡ።";return}$("mm").textContent="እየጫነ...";
+ try{var q=await getDocs(query(collection(db,"marks"),where("cls","==",g),where("sem","==",sem))),by={},C=MC.concat([["fe","Final",25]]);
+  q.docs.forEach(function(d){var x=d.data();(by[x.sid]=by[x.sid]||[]).push(x)});
+  var L=D.s.filter(function(x){return x.gr===g}).sort(function(a,b){return a.name.localeCompare(b.name)});
+  if(!L.length){$("mm").textContent="በዚህ ክፍል ተማሪ የለም።";return}
+  $("idp").innerHTML=L.map(function(s){var rows=(by[s.id]||[]).map(function(x){var sx=SUB.filter(function(y){return y[0]===x.sub})[0],t=0,mx=0;if(!sx)return"";
+    C.forEach(function(c){if(x.m[c[0]]!=null){t+=x.m[c[0]];mx+=c[2]}});
+    return'<tr><td>'+esc(sx[1])+'</td>'+C.map(function(c){return'<td>'+(x.m[c[0]]==null?"-":x.m[c[0]])+'</td>'}).join("")+'<td><b>'+t+' / '+mx+'</b></td></tr>'}).join("");
+   return'<div class="tmp" style="padding:12px;color:#000;background:#fff;font-size:12px"><div style="text-align:center"><img src="logo.png" alt="" style="height:60px"><h2 style="margin:4px 0">Nexus Academy</h2><b>Temporary Result Card — Semester '+sem+'</b></div><p><b>'+esc(s.name)+'</b> · ID: '+esc(s.id)+' · '+esc(s.gr)+(s.br?' · '+esc(s.br):'')+'</p><table style="width:100%;border-collapse:collapse" border="1" cellpadding="4"><tr><th>Subject</th>'+C.map(function(c){return'<th>'+c[1]+'</th>'}).join("")+'<th>Total so far</th></tr>'+(rows||'<tr><td colspan="11">ውጤት ገና አልተሞላም</td></tr>')+'</table><p style="font-size:11px;color:#555">ይህ ጊዜያዊ ካርድ ነው፤ እስካሁን የተሞላውን ውጤት ብቻ ያሳያል (የመጨረሻ ውጤት አይደለም)።</p></div>'}).join("");
+  document.body.classList.add("pid");window.onafterprint=function(){document.body.classList.remove("pid")};$("mm").textContent="";window.print()}
+ catch(e){$("mm").textContent="ስህተት: "+e.code}};
+
+var rd1=rdAd;rdAd=function(){rd1();$("mt_to").innerHTML='<option value="all">ሁሉም መምህራን</option>'+ST.map(function(x){return'<option value="'+x.id+'">'+esc(x.name)+'</option>'}).join("")};
+window.sendMsg=async function(){var to=$("mt_to").value,t=$("mt_tx").value.trim(),st=ST.filter(function(x){return x.id===to})[0];if(t.length<2)return;
+ try{await addDoc(collection(db,"inbox"),{from:auth.currentUser.uid,to:to,toName:to==="all"?"ሁሉም መምህራን":(st?st.name:""),text:t,at:Date.now()});$("mt_tx").value="";$("am").textContent="✓ መልዕክት ተልኳል"}catch(e){$("am").textContent="ስህተት: "+e.code}};
+async function loadInbox(){if(isAdm){$("ib").classList.add("hide");return}$("ib").classList.remove("hide");var uid=auth.currentUser.uid;
+ try{var r=await getDocs(query(collection(db,"inbox"),where("to","in",[uid,"all"]))),L=r.docs.map(function(d){return d.data()}).sort(function(a,b){return b.at-a.at});
+  $("ibl").innerHTML=L.map(function(m){return'<div style="border-top:1px solid var(--bd);padding:8px 0"><small>'+new Date(m.at).toLocaleString()+'</small><br>'+esc(m.text)+'</div>'}).join("")||'<div class="msg">መልዕክት የለም።</div>';
+  var k="nx_seen_"+uid,seen=+localStorage.getItem(k)||0,n=L.filter(function(m){return m.at>seen}).length;if(n)alert("📨 "+n+" አዲስ መልዕክት ከ Admin");if(L.length)localStorage.setItem(k,L[0].at)}
+ catch(e){$("ibl").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}}
+var PER={daily:"ዕለታዊ",weekly:"ሳምንታዊ",monthly:"ወርሃዊ",annual:"ዓመታዊ"};
+async function loadRp(){var uid=auth.currentUser.uid;if(!(isAdm||(ME&&ME.role==="director"))){$("rp").classList.add("hide");return}
+ $("rp").classList.remove("hide");$("rp_f").classList.toggle("hide",isAdm);
+ try{var r=await getDocs(isAdm?collection(db,"reports"):query(collection(db,"reports"),where("from","==",uid))),L=r.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return b.at-a.at});
+  $("rpl").innerHTML=L.map(function(x){var b=(window.BRL||[]).filter(function(y){return y.id===x.branch})[0];return'<div style="border:1px solid var(--bd);border-radius:10px;padding:10px;margin:8px 0"><b>'+esc(x.fromName)+'</b>'+(b?' ('+esc(b.name)+')':'')+' · '+PER[x.period]+' · '+new Date(x.at).toLocaleDateString()+'<br>'+esc(x.text)+'<br>'+
+   (x.reply?'<b>ምላሽ: '+esc(x.reply)+'</b>':(isAdm?'<textarea id="rr_'+x.id+'" rows="2" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn noprint" style="margin:4px 0 0;padding:6px 12px" data-r="'+x.id+'">ምላሽ ላክ</button>':'<small>⏳ ምላሽ ይጠበቃል</small>'))+'</div>'}).join("")||'<div class="msg">ሪፖርት የለም።</div>'}
+ catch(e){$("rpl").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}}
+window.sendRp=async function(){var t=$("rp_t").value.trim();if(t.length<5){$("rp_m").textContent="ሪፖርቱን ይጻፉ።";return}
+ try{await addDoc(collection(db,"reports"),{from:auth.currentUser.uid,fromName:ME.name,branch:ME.branch||"",period:$("rp_p").value,text:t,reply:"",at:Date.now()});$("rp_t").value="";$("rp_m").textContent="✓ ተልኳል";loadRp()}catch(e){$("rp_m").textContent="ስህተት: "+e.code}};
+$("rpl").onclick=async function(e){var id=e.target.getAttribute("data-r");if(!id)return;var t=$("rr_"+id).value.trim();if(!t)return;
+ try{await updateDoc(doc(db,"reports",id),{reply:t,rat:Date.now()});loadRp()}catch(x){alert("ስህተት: "+x.code)}};
+window.printRp=function(){document.body.classList.add("prp");window.onafterprint=function(){document.body.classList.remove("prp")};window.print()};
+
+async function loadMc(){var uid=auth.currentUser.uid;
+ $("mc_s").innerHTML=SUB.filter(function(x){return isAdm||(ME.sub||[]).indexOf(x[0])>-1}).map(function(x){return'<option value="'+x[0]+'">'+esc(x[1])+'</option>'}).join("");
+ try{var r=await getDocs(isAdm?collection(db,"materials"):query(collection(db,"materials"),where("by","==",uid))),L=r.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return b.at-a.at});
+  $("mc_l").innerHTML=L.map(function(m){return'<div style="border-top:1px solid var(--bd);padding:8px 0"><b>'+esc(m.title)+'</b> · '+esc(m.subName)+' · '+esc(m.cls)+'<br><a href="'+esc(m.url)+'" target="_blank" rel="noopener">'+esc(m.url)+'</a> <button class="btn r" style="margin:0 0 0 8px;padding:3px 8px" data-m="'+m.id+'">ሰርዝ</button></div>'}).join("")||'<div class="msg">የተጋራ material የለም።</div>'}
+ catch(e){$("mc_l").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}}
+window.addMat=async function(){var t=$("mc_t").value.trim(),u=$("mc_u").value.trim(),c=$("mc_c").value.trim(),sub=$("mc_s").value,sx=SUB.filter(function(y){return y[0]===sub})[0];
+ if(!t||!/^https:\/\//i.test(u)||!c||!sx){$("mc_m").textContent="ርዕስ፣ ክፍል እና በ https:// የሚጀምር ሊንክ ያስገቡ።";return}
+ if(!isAdm&&(ME.cls||[]).indexOf(c)<0){$("mc_m").textContent="ይህ ክፍል አልተመደበልዎትም።";return}
+ try{await addDoc(collection(db,"materials"),{cls:c,sub:sub,subName:sx[1],title:t,url:u,by:auth.currentUser.uid,byName:isAdm?"Admin":ME.name,at:Date.now()});
+  $("mc_t").value="";$("mc_u").value="";$("mc_m").textContent="✓ ተጋርቷል";loadMc()}catch(e){$("mc_m").textContent="ስህተት: "+e.code}};
+$("mc_l").onclick=async function(e){var id=e.target.getAttribute("data-m");if(id&&confirm("ይሰረዝ?")){try{await deleteDoc(doc(db,"materials",id));loadMc()}catch(x){$("mc_m").textContent="ስህተት: "+x.code}}};
+async function loadMat(){var s=window.CBS;try{var r=await getDocs(query(collection(db,"materials"),where("cls","==",s.gr))),L=r.docs.map(function(d){return d.data()}).sort(function(a,b){return b.at-a.at});
+ if(!L.length||!$("mat_l"))return;$("mat_l").innerHTML=L.map(function(m){return'<div style="border-top:1px solid var(--bd);padding:8px 0"><b>'+esc(m.title)+'</b><br><small>'+esc(m.subName)+' · '+esc(m.byName)+'</small><br><a class="btn" style="margin:6px 0 0;padding:6px 14px;display:inline-block" href="'+esc(m.url)+'" target="_blank" rel="noopener">⬇ ክፈት / አውርድ</a></div>'}).join("");$("mat_c").classList.remove("hide")}catch(e){}}
+
+window.siteUp=function(){var f=$("sw_f").files[0],n=$("sw_n").value;if(!f){$("sw_m").textContent="ፎቶ ይምረጡ።";return}
+ var im=new Image();im.onload=async function(){var q=.7,w=Math.min(1400,im.width),c=document.createElement("canvas");c.width=w;c.height=Math.round(im.height*w/im.width);c.getContext("2d").drawImage(im,0,0,c.width,c.height);
+  var d=c.toDataURL("image/jpeg",q);while(d.length>650000&&q>.3){q-=.1;d=c.toDataURL("image/jpeg",q)}
+  try{await setDoc(doc(db,"config","slide"+n),{img:d,at:Date.now()});$("sw_f").value="";$("sw_m").textContent="✓ Slide "+n+" ተቀይሯል (በ website ላይ ይታያል)"}catch(e){$("sw_m").textContent="ስህተት: "+e.code}};
+ im.src=URL.createObjectURL(f)};
+window.siteReset=async function(){var n=$("sw_n").value;try{await deleteDoc(doc(db,"config","slide"+n));$("sw_m").textContent="✓ Slide "+n+" ወደ ነባሪ ተመልሷል"}catch(e){$("sw_m").textContent="ስህተት: "+e.code}};
+
+var rd2=rdAd;rdAd=function(){rd2();$("dc_p").innerHTML=ST.map(function(x){return'<option value="'+x.id+'">'+esc(x.name)+'</option>'}).join("")};
+window.dcSw=function(){var t=$("dc_k").value==="teacher";$("dc_si").classList.toggle("hide",t);$("dc_st").classList.toggle("hide",!t)};
+var LVS={pending:"⏳ በመጠባበቅ ላይ",approved:"✅ ጸድቋል",rejected:"❌ ተከልክሏል"},BX='style="border:1px solid var(--bd);border-radius:10px;padding:10px;margin:8px 0"';
+async function loadLv(){var uid=auth.currentUser.uid;$("lv_f").classList.toggle("hide",isAdm);
+ try{var r=await getDocs(isAdm?collection(db,"leaves"):query(collection(db,"leaves"),where("from","==",uid))),L=r.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return b.at-a.at});
+  $("lvc").textContent=isAdm?"("+L.filter(function(x){return x.status==="pending"}).length+" በመጠባበቅ ላይ)":"";
+  $("lvl").innerHTML=L.map(function(x){return'<div '+BX+'><b>'+esc(x.name)+'</b> · '+esc(x.type)+' · '+esc(x.fd)+' → '+esc(x.td)+'<br>'+esc(x.reason)+'<br><b>'+LVS[x.status]+'</b>'+(x.note?' — '+esc(x.note):'')+
+   (isAdm&&x.status==="pending"?'<br><input id="ln_'+x.id+'" placeholder="አስተያየት (አማራጭ)"><button class="btn" style="margin:4px 4px 0 0;padding:6px 12px" data-a="'+x.id+'">አጽድቅ</button><button class="btn r" style="margin:4px 0 0;padding:6px 12px" data-j="'+x.id+'">ከልክል</button>':'')+'</div>'}).join("")||'<div class="msg">ጥያቄ የለም።</div>'}
+ catch(e){$("lvl").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}}
+window.sendLv=async function(){var a=$("lv_a").value,b=$("lv_b").value,r=$("lv_r").value.trim();if(!a||!b||b<a||r.length<3){$("lv_m").textContent="ቀኖቹንና ምክንያቱን በትክክል ያስገቡ።";return}
+ try{await addDoc(collection(db,"leaves"),{from:auth.currentUser.uid,name:ME.name,type:$("lv_t").value,fd:a,td:b,reason:r,status:"pending",note:"",at:Date.now()});$("lv_r").value="";$("lv_m").textContent="✓ ተልኳል";loadLv()}catch(e){$("lv_m").textContent="ስህተት: "+e.code}};
+$("lvl").onclick=async function(e){var a=e.target.getAttribute("data-a"),j=e.target.getAttribute("data-j"),id=a||j;if(!id)return;
+ try{await updateDoc(doc(db,"leaves",id),{status:a?"approved":"rejected",note:$("ln_"+id).value.trim()});loadLv()}catch(x){alert("ስህተት: "+x.code)}};
+window.addDc=async function(){var k=$("dc_k").value,t=k==="teacher"?$("dc_p").value:$("dc_i").value.trim(),n=$("dc_n").value.trim(),nm;
+ if(k==="teacher"){var q=ST.filter(function(x){return x.id===t})[0];nm=q&&q.name}else{var s0=D.s.filter(function(x){return x.id===t})[0];nm=s0&&s0.name}
+ if(!nm){$("dc_m").textContent="ማንነቱ አልተገኘም (የምዝገባ ቁጥሩን ያረጋግጡ)።";return}if(n.length<3){$("dc_m").textContent="ማስታወሻ ያስገቡ።";return}
+ try{await addDoc(collection(db,"discipline"),{kind:k,target:t,targetName:nm,level:$("dc_l").value,note:n,by:auth.currentUser.uid,at:Date.now()});$("dc_n").value="";$("dc_i").value="";$("dc_m").textContent="✓ ተመዝግቧል";loadDc()}catch(e){$("dc_m").textContent="ስህተት: "+e.code}};
+async function loadDc(){var uid=auth.currentUser.uid;
+ try{var r=await getDocs(isAdm?collection(db,"discipline"):query(collection(db,"discipline"),where("target","==",uid))),L=r.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return b.at-a.at});
+  var h=L.map(function(x){return'<div '+BX+'><b>'+esc(x.targetName)+'</b> ('+(x.kind==="teacher"?"መምህር":"ተማሪ")+') · '+esc(x.level)+' · '+new Date(x.at).toLocaleDateString()+'<br>'+esc(x.note)+(isAdm?' <button class="btn r" style="margin:0 0 0 8px;padding:3px 8px" data-d="'+x.id+'">ሰርዝ</button>':'')+'</div>'}).join("");
+  if(isAdm)$("dcl").innerHTML=h||'<div class="msg">ምንም የለም።</div>';else{$("dcTl").innerHTML=h;$("dcT").classList.toggle("hide",!L.length)}}
+ catch(e){if(isAdm)$("dcl").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}}
+$("dcl").onclick=async function(e){var id=e.target.getAttribute("data-d");if(id&&confirm("ይሰረዝ?")){try{await deleteDoc(doc(db,"discipline",id));loadDc()}catch(x){alert("ስህተት: "+x.code)}}};
+
+var rd3=rdAd;rdAd=function(){rd3();$("dp_h").innerHTML=ST.map(function(x){return'<option value="'+x.id+'">'+esc(x.name)+'</option>'}).join("")};
+async function loadDp(){if(!isAdm)return;try{var r=await getDocs(collection(db,"departments")),L=r.docs.map(function(d){return Object.assign({id:d.id},d.data())});
+ $("dpl").innerHTML=L.map(function(x){return'<div '+BX+'><b>'+esc(x.name)+'</b> — ተጠሪ: '+esc(x.headName)+' <button class="btn r" style="margin:0 0 0 8px;padding:3px 8px" data-p="'+x.id+'">ሰርዝ</button></div>'}).join("")||'<div class="msg">ዲፓርትመንት የለም።</div>'}catch(e){$("dpl").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}}
+window.addDp=async function(){var n=$("dp_n").value.trim(),h=ST.filter(function(x){return x.id===$("dp_h").value})[0];if(!n||!h){$("dp_m").textContent="ስምና ተጠሪ ይምረጡ።";return}
+ try{await addDoc(collection(db,"departments"),{name:n,head:h.id,headName:h.name,at:Date.now()});$("dp_n").value="";$("dp_m").textContent="✓ ተጨምሯል";loadDp()}catch(e){$("dp_m").textContent="ስህተት: "+e.code}};
+$("dpl").onclick=async function(e){var id=e.target.getAttribute("data-p");if(id&&confirm("ይሰረዝ?")){try{await deleteDoc(doc(db,"departments",id));loadDp()}catch(x){alert("ስህተት: "+x.code)}}};
+async function loadNt(){var vis=isAdm||(ME&&ME.role==="homeroom");$("nt").classList.toggle("hide",!vis);$("tfb").classList.toggle("hide",!vis);if(!vis)return;
+ try{var uid=auth.currentUser.uid,r=await getDocs(isAdm?collection(db,"notices"):query(collection(db,"notices"),where("by","==",uid))),L=r.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return b.at-a.at});
+  $("ntl").innerHTML=L.map(function(x){return'<div '+BX+'><b>'+esc(x.title)+'</b> · '+esc(x.cls)+' · '+new Date(x.at).toLocaleDateString()+'<br>'+esc(x.text)+' <button class="btn r" style="margin:0 0 0 8px;padding:3px 8px" data-n="'+x.id+'">ሰርዝ</button></div>'}).join("")||'<div class="msg">ማስታወቂያ የለም።</div>'}
+ catch(e){$("ntl").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}}
+window.addNt=async function(){var c=$("nt_c").value.trim(),t=$("nt_t").value.trim(),x=$("nt_x").value.trim();if(!c||!t||x.length<3){$("nt_m").textContent="ክፍል፣ ርዕስና ጽሑፍ ያስገቡ።";return}
+ if(!isAdm&&(ME.cls||[]).indexOf(c)<0){$("nt_m").textContent="ይህ ክፍል አልተመደበልዎትም።";return}
+ try{await addDoc(collection(db,"notices"),{cls:c,title:t,text:x,by:auth.currentUser.uid,byName:isAdm?"Admin":ME.name,at:Date.now()});$("nt_t").value="";$("nt_x").value="";$("nt_m").textContent="✓ ታትሟል (ወላጆች ውጤት ሲያዩ ያያሉ)";loadNt()}catch(e){$("nt_m").textContent="ስህተት: "+e.code}};
+$("ntl").onclick=async function(e){var id=e.target.getAttribute("data-n");if(id&&confirm("ይሰረዝ?")){try{await deleteDoc(doc(db,"notices",id));loadNt()}catch(x){alert("ስህተት: "+x.code)}}};
+async function loadNtS(){var s=window.CBS;try{var r=await getDocs(query(collection(db,"notices"),where("cls","==",s.gr))),L=r.docs.map(function(d){return d.data()}).sort(function(a,b){return b.at-a.at});
+ if(!L.length||!$("ntS_l"))return;$("ntS_l").innerHTML=L.slice(0,10).map(function(x){return'<div style="border-top:1px solid var(--bd);padding:8px 0"><b>'+esc(x.title)+'</b><br><small>'+esc(x.byName)+' · '+new Date(x.at).toLocaleDateString()+'</small><br>'+esc(x.text)+'</div>'}).join("");$("ntS_c").classList.remove("hide")}catch(e){}}
+window.transferXl=async function(){var g=$("m_g").value.trim(),sem=$("m_q").value;
+ if(!isAdm&&!(ME&&ME.role==="homeroom"&&(ME.cls||[]).indexOf(g)>-1)){$("mm").textContent="ለዚህ ክፍል Homeroom መምህር ወይም Admin ብቻ።";return}
+ try{var q=await getDocs(query(collection(db,"marks"),where("cls","==",g),where("sem","==",sem))),by={};
+  q.docs.forEach(function(d){var x=d.data(),t=0;for(var k in x.m)t+=x.m[k];(by[x.sid]=by[x.sid]||{})[x.sub]=t});
+  var rows=D.s.filter(function(x){return x.gr===g}).map(function(s){var b=by[s.id]||{},tot=0,n=0,a=SUB.map(function(x){var v=b[x[0]];if(v!=null){tot+=v;n++}return v==null?"":v});return{s:s,a:a,tot:tot,avg:n?tot/n:0}}).sort(function(p,q){return q.tot-p.tot});
+  var A=[["No","Name","ID","Sex"].concat(SUB.map(function(x){return x[1]}),["Total","Average","Rank"])];
+  rows.forEach(function(r,i){A.push([i+1,r.s.name,r.s.id,r.s.g].concat(r.a,[r.tot,+r2(r.avg),i+1]))});
+  var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(A),"Transfer");XLSX.writeFile(wb,"transfer_"+g.replace(/\s/g,"")+"_S"+sem+".xlsx");$("mm").textContent="✓ ተወርዷል"}
+ catch(e){$("mm").textContent="ስህተት: "+e.code}};
 </script>
 </body></html>

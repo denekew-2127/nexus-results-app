@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="am"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Nexus Academy – ኔክሰስ አካዳሚ</title>
+<meta name="description" content="Nexus Academy – Wolkite. Student results, school information and contact.">
+<meta name="theme-color" content="#1d4ed8">
+<link rel="icon" href="logo.png">
+<style>
+:root{--b:#1d4ed8;--b2:#1e3a8a;--g:#f1f5f9;--t:#0f172a;--m:#475569}
+*{box-sizing:border-box;margin:0}html{scroll-behavior:smooth}
+body{font-family:system-ui,"Noto Sans Ethiopic",sans-serif;color:var(--t);background:#fff;line-height:1.6}
+nav{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:14px;padding:10px 16px;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);box-shadow:0 1px 8px #0002}
+nav img{height:38px;width:38px;object-fit:contain}nav b{color:var(--b2);flex:1}
+nav a{color:var(--t);text-decoration:none;font-size:14px;font-weight:600}nav a:hover{color:var(--b)}
+.hero{position:relative;height:100vh;min-height:520px;overflow:hidden;color:#fff;display:flex;align-items:center;justify-content:center;text-align:center}
+.sl{position:absolute;inset:0;background:linear-gradient(135deg,var(--b),#0ea5e9) center/cover;opacity:0;transition:opacity 1.4s}
+.sl.on{opacity:1;animation:zm 9s ease-out forwards}
+.sl:nth-child(2){background-color:#7c3aed}.sl:nth-child(3){background-color:#059669}.sl:nth-child(4){background-color:#ea580c}.sl:nth-child(5){background-color:#be123c}
+@keyframes zm{from{transform:scale(1)}to{transform:scale(1.08)}}
+.hero:after{content:"";position:absolute;inset:0;background:linear-gradient(#0008,#0006)}
+.hc{position:relative;z-index:2;padding:20px;max-width:720px;animation:up 1s both}
+@keyframes up{from{opacity:0;transform:translateY(24px)}}
+.hc img{width:96px;height:96px;object-fit:contain;background:#fff;border-radius:50%;padding:8px;margin-bottom:14px}
+h1{font-size:clamp(28px,6vw,52px);line-height:1.2}.hc p{margin:12px 0 22px;font-size:clamp(15px,3vw,19px)}
+.btn{display:inline-block;margin:5px;padding:12px 22px;border-radius:999px;background:#fff;color:var(--b2);font-weight:700;text-decoration:none}
+.btn.o{background:transparent;color:#fff;border:2px solid #fff}
+.dots{position:absolute;bottom:18px;left:0;right:0;z-index:3;display:flex;justify-content:center;gap:8px}
+.dots i{width:9px;height:9px;border-radius:50%;background:#fff6}.dots i.on{background:#fff}
+section{padding:70px 20px;max-width:960px;margin:auto}section h2{color:var(--b2);font-size:28px;margin-bottom:14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:20px}
+.c{background:var(--g);border-radius:14px;padding:18px}.c b{display:block;color:var(--b);font-size:18px}
+.ct a{color:var(--b)}
+footer{background:var(--b2);color:#e2e8f0;text-align:center;padding:36px 16px 22px}
+.dv{width:120px;height:120px;margin:0 auto 12px;border-radius:50%;padding:4px;background:conic-gradient(#38bdf8,#a78bfa,#f472b6,#fbbf24,#38bdf8);animation:sp 6s linear infinite,fl 3s ease-in-out infinite}
+.dv img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center 15%;border:3px solid var(--b2);display:block}
+@keyframes sp{to{filter:hue-rotate(360deg)}}@keyframes fl{50%{transform:translateY(-6px)}}
+footer a{color:#93c5fd}footer small{display:block;margin-top:10px;opacity:.75;font-size:12px}
+</style></head><body>
+<nav><img src="logo.png" alt="" onerror="this.style.display='none'"><b>Nexus Academy</b><a href="#home">Home</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
+
+<header class="hero" id="home">
+ <div class="sl on" style="background-image:url(slide1.jpg);background-position:center 35%"></div><div class="sl" style="background-image:url(slide2.jpg);background-position:center 35%"></div><div class="sl" style="background-image:url(slide3.jpg);background-position:center 35%"></div><div class="sl" style="background-image:url(slide4.jpg);background-position:center 35%"></div><div class="sl" style="background-image:url(slide5.jpg);background-position:center 35%"></div><div class="sl" style="background-image:url(slide6.jpg);background-position:center 35%"></div><div class="sl" style="background-image:url(slide7.jpg);background-position:center 35%"></div>
+ <div class="hc"><img src="logo.png" alt="Nexus Academy" onerror="this.style.display='none'">
+  <h1>እንኳን ወደ Nexus Academy በደህና መጡ</h1>
+  <p>Welcome to Nexus Academy — ጥራት ያለው ትምህርት ለነገ ትውልድ።</p>
+  <a class="btn" href="index.html">🎓 ውጤት ይመልከቱ</a><a class="btn o" href="index.html">👩‍🏫 መምህር መግቢያ</a></div>
+ <div class="dots"><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</header>
+
+<section id="about"><h2>ስለ ትምህርት ቤታችን (About)</h2>
+ <p>ኔክሰስ አካዳሚ (Nexus Academy) በ 5 ቅርንጫፎች የሚሰጥ ትምህርት ቤት ነው። ወላጆችና ተማሪዎች ውጤትን በኢንተርኔት በቀላሉ መከታተል ይችላሉ።</p>
+ <div class="cards">
+  <div class="c"><b>ራዕይ (Vision)</b>ተማሪዎቻችንን አካዳሚያዊና ማህበራዊ ክህሎቶቻቸውን መጠቀም የሚያስችላቸው ደረጃ ላይ ደርሰው ማየት።</div>
+  <div class="c"><b>ተልዕኮ (Mission)</b>በዳበረ የትምህርት ፕሮግራም ከተማሪዎች፣ ከወላጆች፣ ከመምህራን እንዲሁም ከህብረተሰቡ ጋር በመተባበር ውጤታማና አርዓያ የሆኑ ዜጎችን በማፍራት ተመራጭ ትምህርት ቤት መሆን።</div>
+ </div>
+ <h2 style="margin-top:34px">እሴቶቻችን (Core Values)</h2>
+ <div class="cards">
+  <div class="c"><b>Courage — ተነሳሽነት</b>እርምጃ እንወስዳለን፣ ስህተታችንን አምነን እንቀበላለን።</div>
+  <div class="c"><b>Consistency — ዘላቂነት</b>ቃላችንን እንጠብቃለን።</div>
+  <div class="c"><b>Respect — አክብሮት</b>እርስ በርስ እንከባበራለን።</div>
+  <div class="c"><b>Transparency — ግልፀኝነት</b>በምንሰራው ስራ ግልፅ ነን።</div>
+  <div class="c"><b>Determination — ፅናት</b>አላማችንን እና ግባችንን እናሳካለን።</div>
+  <div class="c"><b>Safety — ምቹ</b>ከአደጋ የፀዳ ምቹ አካባቢ እንፈጥራለን።</div>
+  <div class="c"><b>Partnership — ሽርክና</b>በተማሪዎች፣ በሰራተኞች፣ በወላጆችና በማህበረሰቡ መሀል ሽርክና (ጓደኝነት) እንገነባለን።</div>
+ </div>
+</section>
+
+<section id="contact" class="ct"><h2>አግኙን (Contact)</h2>
+ <div class="cards">
+  <div class="c"><b>📍 አድራሻ</b>ወልቂጤ ከተማ፣ የድሮው «የነገው ትውልድ» ትምህርት ቤት፣ ከዋናው አስፓልት ወደ 300 ሜትር ገደማ ገባ ብሎ።</div>
+  <div class="c"><b>📞 ስልክ</b><a href="tel:+251944299218">+251 944 299 218</a><br><a href="tel:+251113659943">+251 113 659 943</a></div>
+  <div class="c"><b>✉️ ኢሜይል</b><a href="mailto:NexusAcademy2127@gmail.com">NexusAcademy2127@gmail.com</a></div>
+ </div></section>
+
+<footer>
+ <div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku"></div>
+ <b>Developed by Denekew Bamlaku</b> · DB technologies<br>
+ ☎ <a href="tel:+251925891806">0925891806</a> · ✉ <a href="mailto:Denekewbamlaku2127@gmail.com">Denekewbamlaku2127@gmail.com</a>
+ <small>© 2026 Nexus Academy. All rights reserved. This website and the results system are designed and developed by DB technologies — unauthorized copying or reuse is prohibited.</small>
+</footer>
+<script>
+var S=document.querySelectorAll(".sl"),D=document.querySelectorAll(".dots i"),n=0;
+setInterval(function(){S[n].classList.remove("on");D[n].classList.remove("on");n=(n+1)%S.length;S[n].classList.add("on");D[n].classList.add("on")},5000);
+
+for(var i=1;i<=S.length;i++)(function(i){fetch("https://firestore.googleapis.com/v1/projects/nexus-academy-b4efc/databases/(default)/documents/config/slide"+i+"?key=AIzaSyAqle_Bp56Im69br-0cPLa1HVZIPNgsD2Y").then(function(r){return r.ok?r.json():null}).then(function(j){var v=j&&j.fields&&j.fields.img&&j.fields.img.stringValue;if(v)S[i-1].style.backgroundImage="url("+v+")"}).catch(function(){})})(i);
+</script></body></html>
