@@ -86,7 +86,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
    <div class="grid"><div><label>አዲስ ክፍል</label><input id="cn" placeholder="Grade 9A"></div><div style="align-self:end"><button class="btn" onclick="addCl()">ክፍል ጨምር</button></div></div><div id="cm" class="msg"></div>
    <label style="margin-top:12px">መምህራን</label><div class="tw"><table id="tl"></table></div>
    <div class="grid"><div><label>ስም</label><input id="tn"></div><div><label>ኢሜይል</label><input id="te" type="email"></div>
-   <div><label>የይለፍ ቃል (ቢያንስ 8)</label><input id="tp" type="password"></div>
+   <div><label>የይለፍ ቃል (ቢያንስ 8)</label><input id="tpw" type="password"></div>
    <div><label>ሚና</label><select id="tr"><option value="teacher">መምህር</option><option value="homeroom">Homeroom መምህር</option><option value="director">የቅርንጫፍ ዳይሬክተር</option></select></div>
    <div><label>ቅርንጫፍ</label><select id="tb"></select></div><div><label>ትምህርቶች (በኮማ)</label><input id="ts" placeholder="ICT, CTE"></div><div><label>ክፍሎች (በኮማ)</label><input id="tc" placeholder="Grade 8A, Grade 8B"></div></div>
    <button class="btn" onclick="addStaff()">መምህር ጨምር</button><div id="am" class="msg"></div></div>
@@ -376,23 +376,23 @@ async function loadAd(){try{var b=await getDocs(collection(db,"branches")),t=awa
  catch(e){$("am").textContent="ስህተት: "+e.code+" (Rules ን ያትሙ)"}}
 window.addBr=async function(){var n=$("bn").value.trim();if(!n)return;
  try{await setDoc(doc(collection(db,"branches")),{name:n});$("bn").value="";$("am").textContent="✓ ቅርንጫፍ ተጨምሯል";loadAd()}catch(e){$("am").textContent="ስህተት: "+e.code}};
-window.addStaff=async function(){var n=$("tn").value.trim(),m=$("te").value.trim().toLowerCase(),p=$("tp").value;
+window.addStaff=async function(){var n=$("tn").value.trim(),m=$("te").value.trim().toLowerCase(),p=$("tpw").value;
  if(!n||!m||p.length<8||!$("tb").value){$("am").textContent="ስም፣ ኢሜይል፣ ቅርንጫፍ እና የይለፍ ቃል (ቢያንስ 8) ያስገቡ።";return}
  try{var a2=getAuth(initializeApp(CFG,"s"+Date.now())),c=await createUserWithEmailAndPassword(a2,m,p);await signOut(a2);
   await setDoc(doc(db,"staff",c.user.uid),{name:n,email:m,role:$("tr").value,branch:$("tb").value,subjects:$("ts").value.trim()});
-  ["tn","te","tp","ts"].forEach(function(k){$(k).value=""});$("am").textContent="✓ መምህር ተጨምሯል";loadAd()}
+  ["tn","te","tpw","ts"].forEach(function(k){$(k).value=""});$("am").textContent="✓ መምህር ተጨምሯል";loadAd()}
  catch(e){$("am").textContent=e.code==="auth/email-already-in-use"?"ይህ ኢሜይል ቀድሞ አለ።":"ስህተት: "+e.code}};
 $("bl").onclick=async function(e){var i=e.target.getAttribute("data-b");if(i&&confirm("ቅርንጫፉ ይሰረዝ?")){await deleteDoc(doc(db,"branches",i));loadAd()}};
 $("tl").onclick=async function(e){var i=e.target.getAttribute("data-s");if(i&&confirm("ከዝርዝሩ ይወገድ? (መለያው በ Firebase Users ውስጥ ይቀራል)")){await deleteDoc(doc(db,"staff",i));loadAd()}};
 
 var ME=null,isAdm=false;
 function subKeys(t){var o=[],bad=[];t.split(",").forEach(function(x){x=x.trim();if(!x)return;var y=SUB.filter(function(z){return nm(z[1])===nm(x)||z[0]===x.toLowerCase()})[0];y?o.push(y[0]):bad.push(x)});return{out:o,bad:bad}}
-window.addStaff=async function(){$("am").textContent="እየተመዘገበ...";var n=$("tn").value.trim(),m=$("te").value.trim().toLowerCase(),p=$("tp").value,sk=subKeys($("ts").value),cl=$("tc").value.split(",").map(function(x){return x.trim()}).filter(Boolean).map(function(x){var q=Object.keys(clsAll()).filter(function(c){return c.toLowerCase()===x.toLowerCase()})[0];return q||x});
+window.addStaff=async function(){$("am").textContent="እየተመዘገበ...";var n=$("tn").value.trim(),m=$("te").value.trim().toLowerCase(),p=$("tpw").value,sk=subKeys($("ts").value),cl=$("tc").value.split(",").map(function(x){return x.trim()}).filter(Boolean).map(function(x){var q=Object.keys(clsAll()).filter(function(c){return c.toLowerCase()===x.toLowerCase()})[0];return q||x});
  if(!n||!m||p.length<8||!$("tb").value){$("am").textContent="ስም፣ ኢሜይል፣ ቅርንጫፍ እና የይለፍ ቃል (ቢያንስ 8) ያስገቡ።";return}
  if(sk.bad.length){$("am").textContent="ያልታወቀ ትምህርት: "+sk.bad.join(", ")+" (ስሙ ከትምህርቶች ዝርዝር ጋር አንድ ይሁን)";return}
  try{var a2=getAuth(initializeApp(CFG,"s"+Date.now())),uid;try{uid=(await createUserWithEmailAndPassword(a2,m,p)).user.uid}catch(e){if(e.code==="auth/email-already-in-use")uid=(await signInWithEmailAndPassword(a2,m,p)).user.uid;else throw e}await signOut(a2);
   await setDoc(doc(db,"staff",uid),{name:n,email:m,role:$("tr").value,branch:$("tb").value,subjects:$("ts").value.trim(),sub:sk.out,cls:cl});
-  ["tn","te","tp","ts","tc"].forEach(function(k){$(k).value=""});$("am").textContent="✓ መምህር ተጨምሯል";loadAd()}
+  ["tn","te","tpw","ts","tc"].forEach(function(k){$(k).value=""});$("am").textContent="✓ መምህር ተጨምሯል";loadAd()}
  catch(e){$("am").textContent=(/invalid-(login|credential)|wrong-password/.test(e.code))?"ይህ ኢሜይል በ Firebase ቀድሞ አለ፤ ነገር ግን እዚህ ያስገባኸው የይለፍ ቃል በ Firebase ካስቀመጥከው ጋር አይመሳሰልም።":"ስህተት: "+e.code}};
 var mf1=window.mlFill;window.mlFill=function(){mf1();if(!isAdm&&ME){var c=$("m_s").value;
  $("m_s").innerHTML=SUB.filter(function(x){return(ME.sub||[]).indexOf(x[0])>-1}).map(function(x){return'<option value="'+x[0]+'">'+esc(x[1])+'</option>'}).join("");if(c)$("m_s").value=c;
