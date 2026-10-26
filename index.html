@@ -87,9 +87,10 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
    <label>የውጤት ደረጃ (ነጥብ:ፊደል)</label><div class="grid"><div><input id="gs" placeholder="97:A,90:B,80:C,70:D,60:E,0:F"></div><div><button class="btn" onclick="setGs()">ደረጃ አስቀምጥ</button></div></div>
    <label>የማለፊያ ነጥብ (አማካይ)</label><div class="grid"><div><input id="pm" type="number" min="1" max="100" placeholder="50"></div><div><button class="btn" onclick="setPm()">ነጥብ አስቀምጥ</button></div></div>
    <label style="display:block;margin:10px 0"><input type="checkbox" id="gv" style="width:auto" onchange="setGv()"> የተማሪ ደረጃ ፊደል (A, B, C…) ለተማሪ አሳይ</label>
-   <label>Report card የሚያካትተው ውጤት (ለምሳሌ CA ብቻ)</label><div id="rcb"></div><div id="rct" class="msg" style="color:var(--mu)"></div><button class="btn" onclick="setRc()">Report card ቅንብር አስቀምጥ</button>
+   <label>Report card የሚያካትተው ውጤት (ለምሳሌ CA ብቻ)</label><div><button class="btn g" onclick="rcPre('q1')">1ኛ ሩብ (35)</button> <button class="btn g" onclick="rcPre('all')">ሁሉም (100)</button></div><div id="rcb"></div><div id="rct" class="msg" style="color:var(--mu)"></div><button class="btn" onclick="setRc()">Report card ቅንብር አስቀምጥ</button>
    <label style="margin-top:12px">ክፍሎች</label><div class="tw"><table id="cl"></table></div>
    <div class="grid"><div><label>አዲስ ክፍል</label><input id="cn" placeholder="Grade 9A"></div><div style="align-self:end"><button class="btn" onclick="addCl()">ክፍል ጨምር</button></div></div><div id="cm" class="msg"></div>
+   <div class="grid"><div><label>ላልተመደቡ ክፍሎች ቅርንጫፍ</label><select id="cb_all"></select></div><div style="align-self:end"><button class="btn" onclick="assignBr()">ሁሉንም መድብ</button></div></div>
    <label style="margin-top:12px">መምህራን</label><div class="tw"><table id="tl"></table></div>
    <div class="grid"><div><label>ስም</label><input id="tn"></div><div><label>ኢሜይል</label><input id="te" type="email"></div>
    <div><label>የይለፍ ቃል (ቢያንስ 8)</label><input id="tpw" type="password"></div>
@@ -116,6 +117,8 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
    <button class="btn g" onclick="xlExport()">⬇ Excel አውርድ</button> <label class="btn g" style="display:inline-block;cursor:pointer">⬆ Excel አስገባ<input type="file" accept=".xlsx,.xls,.csv" hidden onchange="xlImport(this.files[0]);this.value=''"></label>
    <label class="btn g adm" style="display:inline-block;cursor:pointer">👥 ተማሪዎችን ከ Excel (ሁሉም ሉሆች)<input type="file" accept=".xlsx,.xls" hidden onchange="rosterImport(this.files[0]);this.value=''"></label>
    <label class="btn g adm" style="display:inline-block;cursor:pointer">👤 አንድ ክፍል ከ Excel<input type="file" accept=".xlsx,.xls" hidden onchange="rosterImport(this.files[0],$('m_g').value.trim());this.value=''"></label> <button class="btn g adm" onclick="tplRoster()">📄 Roster template</button>
+   <button class="btn g adm" onclick="rosterXl()">🧾 Roster (ሁሉም ክፍሎች)</button> <button class="btn g hide" id="rfb" onclick="rosterOne()">🧾 Roster (ይህ ክፍል)</button>
+   <button class="btn g" onclick="trSub('q')">📋 Transfer: 1ኛ ሩብ (35)</button> <button class="btn g" onclick="trSub('s')">📋 Transfer: ሴሚስተር</button>
    <div class="tw"><table id="mt"></table></div>
    <button class="btn hide" id="mb" onclick="mlSave()">ውጤት አስቀምጥ</button><div id="mm" class="msg"></div>
    <h2 class="adm" style="margin-top:14px">ተማሪዎችን በአንድ ጊዜ ጨምር</h2>
@@ -239,18 +242,47 @@ function xlImport(f){if(!f)return;var rows=$("mt").querySelectorAll("tr[data-i]"
   mlCalc();$("mm").textContent="✓ ["+sn+"] "+ok+" ተማሪ ተሞልቷል"+(miss?"፣ "+miss+" አልተገኙም (ስማቸውን ያረጋግጡ)":"")+" — «ውጤት አስቀምጥ» ይንኩ"}catch(e){$("mm").textContent="ፋይሉን ማንበብ አልተሳካም"}};r.readAsArrayBuffer(f)}
 function rosterImport(f,one){if(!f)return;var r=new FileReader();r.onload=function(){try{var wb=XLSX.read(r.result,{type:"array"}),seen={},add=0,skip=[],yr=String($("f_y").value||"2018"),mx=0;
  D.s.forEach(function(x){var m=/^NX\d+-(\d+)$/.exec(x.id);if(m)mx=Math.max(mx,+m[1])});
- wb.SheetNames.forEach(function(n){var m=/(\d+)\s*([A-Za-z]?)/.exec(n),pg=m?"Grade "+m[1]+m[2].toUpperCase():null,gr=one||pg;
+ wb.SheetNames.forEach(function(n){if(isTransfer(wb.Sheets[n]))return;var m=/(\d+)\s*([A-Za-z]?)/.exec(n),pg=m?"Grade "+m[1]+m[2].toUpperCase():null,gr=one||pg;
   if(one&&wb.SheetNames.length>1&&(!pg||pg.toLowerCase()!==one.toLowerCase()))return;
   if(!gr){skip.push(n);return}
   if(seen[gr]){skip.push(n);return}seen[gr]=1;
-  var A=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:""}),h=-1,cn=1,cs=2,L=[];
-  for(var i=0;i<A.length&&h<0;i++){var q=A[i].map(nm);if(q.indexOf("studentname")>-1){h=i;cn=q.indexOf("studentname");cs=q.indexOf("sex")}}
+  var A=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:""}),h=-1,cn=1,cs=2,L=[],ca=-1;
+  for(var i=0;i<A.length&&h<0;i++){var q=A[i].map(nm);if(q.indexOf("studentname")>-1){h=i;cn=q.indexOf("studentname");cs=q.indexOf("sex");ca=q.indexOf("age")}}
   if(h<0){skip.push(n);return}
   for(var i=h+1;i<A.length;i++){var no=A[i][0],nv=String(A[i][cn]).replace(/\s+/g," ").trim();if(no===""||isNaN(+no)||!nv)continue;
-   if(D.s.some(function(x){return x.gr===gr&&nm(x.name)===nm(nv)}))continue;L.push({n:nv.toUpperCase(),g:/^f/i.test(String(A[i][cs]))?"Female":"Male"})}
+   if(D.s.some(function(x){return x.gr===gr&&nm(x.name)===nm(nv)}))continue;L.push({n:nv.toUpperCase(),g:/^f/i.test(String(A[i][cs]))?"Female":"Male",age:(ca>-1&&A[i][ca]!==""&&!isNaN(+A[i][ca]))?+A[i][ca]:null})}
   L.sort(function(a,b){return a.n.localeCompare(b.n)});
-  L.forEach(function(x){mx++;D.s.push({id:"NX"+yr.slice(-2)+"-"+String(mx).padStart(4,"0"),name:x.n,g:x.g,gr:gr,y:yr,z:$("f_z").value,w:$("f_w").value,a:{},ml:{}});add++})});
+  L.forEach(function(x){mx++;D.s.push({id:"NX"+yr.slice(-2)+"-"+String(mx).padStart(4,"0"),name:x.n,g:x.g,gr:gr,y:yr,z:$("f_z").value,w:$("f_w").value,age:x.age,a:{},ml:{}});add++})});
  persist();draw();mlFill();$("mm").textContent="✓ "+add+" ተማሪ ተጨመረ (በስም A–Z ተደርድረው፣ ቁጥር ተሰጥቷቸዋል)"+(skip.length?" — ያልተነበቡ ሉሆች: "+skip.join(", "):"")}catch(e){$("mm").textContent="ፋይሉን ማንበብ አልተሳካም"}};r.readAsArrayBuffer(f)}
+function isTransfer(ws){return XLSX.utils.sheet_to_json(ws,{header:1,defval:""}).slice(0,6).some(function(r){return r.some(function(c){return/transfer/i.test(String(c))})})}
+function rosterXl(only){var yr=String($("f_y").value||"2018"),all=only?[only]:Object.keys(clsAll()).sort(cmp),wb=XLSX.utils.book_new(),n0=0;
+ all.forEach(function(g){var L=D.s.filter(function(x){return x.gr===g}).sort(function(a,b){return a.name.localeCompare(b.name)});if(!L.length)return;
+  var S=SUB.filter(function(x){return L.some(function(s){return(s.ml&&(s.ml[x[0]+"_1"]||s.ml[x[0]+"_2"]))||(s.a&&s.a[x[0]]!=null)})});if(!S.length)S=SUB;
+  var sv=function(s,x,sem){var m=s.ml&&s.ml[x[0]+"_"+sem];if(!m)return null;var t=0;for(var k in m)t+=m[k];return Math.round(t*10)/10};
+  var rows=L.map(function(s){var a=S.map(function(x){return sv(s,x,"1")}),b=S.map(function(x){return sv(s,x,"2")}),
+   c=S.map(function(x,i){var v=[a[i],b[i]].filter(function(z){return z!=null});return v.length?Math.round(v.reduce(function(p,q){return p+q},0)/v.length*10)/10:(s.a&&s.a[x[0]]!=null?s.a[x[0]]:null)});return{s:s,r:[a,b,c]}});
+  var info=function(v){var g2=v.filter(function(z){return z!=null}),t=g2.reduce(function(p,q){return p+q},0);return{t:g2.length?Math.round(t*10)/10:null,av:g2.length?Math.round(t/g2.length*100)/100:null}};
+  [0,1,2].forEach(function(k){rows.forEach(function(o){o["i"+k]=info(o.r[k])});var arr=rows.filter(function(o){return o["i"+k].av!=null}).sort(function(p,q){return q["i"+k].av-p["i"+k].av});
+   arr.forEach(function(o,i){o["k"+k]=i>0&&o["i"+k].av===arr[i-1]["i"+k].av?arr[i-1]["k"+k]:i+1})});
+  var H=["No","Student's Name","Sex","Age","Semesters"].concat(S.map(function(x){return x[1]}),["Conduct","Absent","Total","Average","Rank","Remark"]);
+  var A=[["Nexus Academy"],["Student's Roster"],["","","","",g,"","","","","Academic Year 2025/2026 or "+yr+" E.C"],H],mg=[],lab=["I","II","Ave"];
+  rows.forEach(function(o,i){var r0=A.length;[0,1,2].forEach(function(k){var f=o["i"+k],pass=k===2&&f.av!=null?(f.av>=PM()?"PASS":"FAIL"):"";
+    A.push([k?"":i+1,k?"":o.s.name,k?"":(o.s.g==="Female"?"F":"M"),k?"":(o.s.age==null?"":o.s.age),lab[k]].concat(o.r[k].map(function(z){return z==null?"":z}),["","",f.t==null?"":f.t,f.av==null?"":f.av,o["k"+k]==null?"":o["k"+k],pass]))});
+   [0,1,2,3].forEach(function(c){mg.push({s:{r:r0,c:c},e:{r:r0+2,c:c}})})});
+  var ws=XLSX.utils.aoa_to_sheet(A);ws["!merges"]=mg;ws["!cols"]=[{wch:5},{wch:30},{wch:5},{wch:5},{wch:9}].concat(S.map(function(){return{wch:13}}),[{wch:8},{wch:8},{wch:9},{wch:9},{wch:7},{wch:9}]);
+  XLSX.utils.book_append_sheet(wb,ws,(g.replace(/^grade\s*/i,"").replace(/[\\\/\?\*\[\]:]/g,"").slice(0,30))||g);n0++});
+ if(!n0){alert("ለዚህ ክፍል ተማሪ አልተገኘም።");return}
+ XLSX.writeFile(wb,only?"Roster_"+only.replace(/\s/g,"")+".xlsx":"Roster_All_Classes_"+yr+".xlsx")}
+function trSub(kind){var rows=$("mt").querySelectorAll("tr[data-i]");if(!rows.length){$("mm").textContent="መጀመሪያ ማርክሊስት ክፈት";return}
+ var q=kind==="q",so=$("m_s").selectedOptions[0],sx=so?so.textContent:"",g=$("m_g").value.trim(),t=$("m_t").value.trim(),yr=String($("f_y").value||"2018");
+ var A=[["Nexus Academy"],[q?"1st Quarter transfer sheet":"Semester "+$("m_q").value+" transfer sheet"],["Name of teacher: "+t+"    Academic Year 2025/2026 or "+yr+" E.C"],["Subject: "+sx+"    Grade: "+g],
+  q?["No","Student Name","Sex","Work Sh't 1 (5)","Test 1 (10)","Mid (20)","Total (35)"]:["No","Student Name","Sex","Sub total (75)","Final Exam (25)","Total (100)","Remark"]];
+ rows.forEach(function(r,i){var td=r.querySelectorAll("td"),v={},n=function(z){return z==null?"":z};r.querySelectorAll("input").forEach(function(e){v[e.dataset.k]=e.value===""?null:+e.value});
+  if(q)A.push([i+1,td[1].textContent,td[2].textContent,n(v.w1),n(v.t1),n(v.mi),(v.w1||0)+(v.t1||0)+(v.mi||0)]);
+  else{var st=0;["w1","t1","as","mi","w2","t2","qu","eb"].forEach(function(k){st+=v[k]||0});A.push([i+1,td[1].textContent,td[2].textContent,st,n(v.fe),st+(v.fe||0),""])}});
+ var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(A),"Transfer");XLSX.writeFile(wb,"transfer_"+(q?"Q1":"S"+$("m_q").value)+"_"+g.replace(/\s/g,"")+"_"+sx.replace(/\s/g,"")+".xlsx")}
+function rcPre(k){var on=k==="q1"?["w1","t1","mi"]:null;document.querySelectorAll(".rck").forEach(function(e){e.checked=!on||on.indexOf(e.dataset.k)>-1});rcTot()}
+function assignBr(){var id=$("cb_all").value,b=(window.BRL||[]).filter(function(x){return x.id===id})[0];if(!b){$("cm").textContent="መጀመሪያ ቅርንጫፍ ይምረጡ።";return}var n=0;Object.keys(clsAll()).forEach(function(c){if(!D.cb[c]){D.cb[c]={id:b.id,name:b.name};n++}});clDone("✓ "+n+" ክፍሎች ለ "+b.name+" ተመድበዋል")}
 function topL(){var g=$("m_g").value.trim();return D.s.filter(function(x){return!g||x.gr===g}).sort(function(a,b){return calc(b).total-calc(a).total}).slice(0,20)}
 function top20(){$("tt20").innerHTML='<tr><th>#</th><th>Name</th><th>Grade</th><th>Total</th><th>Avg</th></tr>'+topL().map(function(s,i){var c=calc(s);return'<tr><td>'+(i+1)+'</td><td>'+esc(s.name)+'</td><td>'+esc(s.gr)+'</td><td>'+r2(c.total)+'</td><td>'+r2(c.avg)+'</td></tr>'}).join("")}
 function topXl(){var A=[["Rank","Name","Grade","Total","Average"]];topL().forEach(function(s,i){var c=calc(s);A.push([i+1,s.name,s.gr,+r2(c.total),+r2(c.avg)])});
@@ -568,7 +600,7 @@ async function loadDp(){if(!isAdm)return;try{var r=await getDocs(collection(db,"
 window.addDp=async function(){var n=$("dp_n").value.trim(),h=ST.filter(function(x){return x.id===$("dp_h").value})[0];if(!n||!h){$("dp_m").textContent="ስምና ተጠሪ ይምረጡ።";return}
  try{await addDoc(collection(db,"departments"),{name:n,head:h.id,headName:h.name,at:Date.now()});$("dp_n").value="";$("dp_m").textContent="✓ ተጨምሯል";loadDp()}catch(e){$("dp_m").textContent="ስህተት: "+e.code}};
 $("dpl").onclick=async function(e){var id=e.target.getAttribute("data-p");if(id&&confirm("ይሰረዝ?")){try{await deleteDoc(doc(db,"departments",id));loadDp()}catch(x){alert("ስህተት: "+x.code)}}};
-async function loadNt(){var vis=isAdm||(ME&&ME.role==="homeroom");$("nt").classList.toggle("hide",!vis);$("tfb").classList.toggle("hide",!vis);if(!vis)return;
+async function loadNt(){var vis=isAdm||(ME&&ME.role==="homeroom");$("nt").classList.toggle("hide",!vis);$("tfb").classList.toggle("hide",!vis);$("rfb").classList.toggle("hide",!vis);if(!vis)return;
  try{var uid=auth.currentUser.uid,r=await getDocs(isAdm?collection(db,"notices"):query(collection(db,"notices"),where("by","==",uid))),L=r.docs.map(function(d){return Object.assign({id:d.id},d.data())}).sort(function(a,b){return b.at-a.at});
   $("ntl").innerHTML=L.map(function(x){return'<div '+BX+'><b>'+esc(x.title)+'</b> · '+esc(x.cls)+' · '+new Date(x.at).toLocaleDateString()+'<br>'+esc(x.text)+' <button class="btn r" style="margin:0 0 0 8px;padding:3px 8px" data-n="'+x.id+'">ሰርዝ</button></div>'}).join("")||'<div class="msg">ማስታወቂያ የለም።</div>'}
  catch(e){$("ntl").innerHTML='<div class="msg">ስህተት: '+e.code+'</div>'}}
@@ -603,6 +635,9 @@ var rd5=rdAd;rdAd=function(){rd5();$("pm").value=D.pm;$("gs").value=D.gs};
 
 function semAvgPct(s,sub,sem,m){var t=0;for(var k in m)t+=m[k];var o=sem==="1"?"2":"1",om=s.ml&&s.ml[sub+"_"+o];if(!om)return t;var u=0;for(var k2 in om)u+=om[k2];return(t+u)/2}
 var rd6=rdAd;rdAd=function(){rd6();$("gv").checked=D.gv!==false;rcDraw()};
+
+window.rosterOne=function(){var g=$("m_g").value.trim();if(!isAdm&&!(ME&&ME.role==="homeroom"&&(ME.cls||[]).indexOf(g)>-1)){$("mm").textContent="ለዚህ ክፍል Homeroom መምህር ወይም Admin ብቻ።";return}rosterXl(g)};
+var rd7=rdAd;rdAd=function(){rd7();$("cb_all").innerHTML=BR.map(function(b){return'<option value="'+b.id+'">'+esc(b.name)+'</option>'}).join("")};
 window.addEventListener("unhandledrejection",function(e){var a=$("am");if(a)a.textContent="ስህተት: "+((e.reason&&(e.reason.code||e.reason.message))||e.reason)});
 window.addEventListener("error",function(e){var a=$("am");if(a)a.textContent="ስህተት: "+e.message});
 </script>
