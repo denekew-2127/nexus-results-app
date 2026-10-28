@@ -115,7 +115,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
     <div><label>ሴሚስተር</label><select id="m_q"><option value="1">Semester I</option><option value="2" selected>Semester II</option></select></div>
    </div>
    <button class="btn" onclick="mlOpen()">ማርክሊስት ክፈት</button> <button class="btn adm" onclick="pubCl()">📤 ውጤት አትም (Admin)</button> <button class="btn adm" onclick="tmpCards()">🖨 ጊዜያዊ ካርድ (Open house)</button> <button class="btn adm" onclick="rcClass()">📘 Report cards (ክፍል)</button> <button class="btn g hide" id="tfb" onclick="transferXl()">📊 Transfer sheet (Excel)</button>
-   <button class="btn g" onclick="xlExport()">⬇ Excel አውርድ</button> <label class="btn g" style="display:inline-block;cursor:pointer">⬆ Excel አስገባ<input type="file" accept=".xlsx,.xls,.csv" hidden onchange="xlImport(this.files[0]);this.value=''"></label>
+   <button class="btn g" onclick="xlExport()">⬇ Excel አውርድ</button> <label class="btn g" style="display:inline-block;cursor:pointer">⬆ Excel አስገባ<input type="file" accept=".xlsx,.xls,.csv" hidden onclick="try{sessionStorage.setItem('nx_pick','1')}catch(e){}" oncancel="try{sessionStorage.removeItem('nx_pick')}catch(e){}" onchange="xlImport(this.files[0]);this.value=''"></label>
    <label class="btn g adm" style="display:inline-block;cursor:pointer">👥 ተማሪዎችን ከ Excel (ሁሉም ሉሆች)<input type="file" accept=".xlsx,.xls" hidden onchange="rosterImport(this.files[0]);this.value=''"></label>
    <label class="btn g adm" style="display:inline-block;cursor:pointer">👤 አንድ ክፍል ከ Excel<input type="file" accept=".xlsx,.xls" hidden onchange="rosterImport(this.files[0],$('m_g').value.trim());this.value=''"></label> <button class="btn g adm" onclick="tplRoster()">📄 Roster template</button>
    <button class="btn g adm" onclick="rosterXl()">🧾 Roster (ሁሉም ክፍሎች)</button> <button class="btn g hide" id="rfb" onclick="rosterOne()">🧾 Roster (ይህ ክፍል)</button>
@@ -136,7 +136,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved.</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v2</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
@@ -243,7 +243,7 @@ function xlCol(x){x=nm(String(x).replace(/\(.*?\)/g,""));if(!x)return null;if(XH
  if(/^(final|fe$)/.test(x))return "fe";
  return null}
 function xlGk(s){var m=/(\d+)\s*([a-z]?)/i.exec(String(s));return m?m[1]+m[2].toLowerCase():xlKey(s)}
-function xlImport(f){if(!f)return;
+function xlImport(f){try{sessionStorage.removeItem("nx_pick")}catch(e){}if(!f)return;
  if(typeof XLSX==="undefined"){$("mm").textContent="Excel ላይብረሪ አልተጫነም — ኢንተርኔት ያረጋግጡና ገጹን ያድሱ።";return}
  var run=function(){var rows=[].slice.call($("mt").querySelectorAll("tr[data-i]"));
   if(!rows.length){if(!$("mm").textContent)$("mm").textContent="መጀመሪያ ክፍልና ትምህርት መርጠው «ማርክሊስት ክፈት» ይንኩ።";return}
@@ -422,7 +422,7 @@ function setPm(){var v=+$("pm").value;if(!(v>0&&v<=100)){$("cm").textContent="�
 </script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import{getAuth,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,createUserWithEmailAndPassword}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import{getAuth,signInWithEmailAndPassword,signOut,sendPasswordResetEmail,createUserWithEmailAndPassword,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import{getFirestore,doc,getDoc,getDocs,collection,writeBatch,setDoc,deleteDoc,query,where,addDoc,updateDoc}from"https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 // ↓↓ ከ Firebase Console ኮፒ አድርገህ እነዚህን ሁለት እሴቶች ተካ ↓↓
 var CFG={apiKey:"AIzaSyAqle_Bp56Im69br-0cPLa1HVZIPNgsD2Y",authDomain:"nexus-academy-b4efc.firebaseapp.com",projectId:"nexus-academy-b4efc",storageBucket:"nexus-academy-b4efc.firebasestorage.app",messagingSenderId:"1056627396241",appId:"1:1056627396241:web:efaeadb54080f45390f930"},app=initializeApp(CFG);
@@ -462,16 +462,22 @@ window.look=async function(){var inp=$("rq"),q=inp.value.trim(),m=$("rm");$("res
 window.login=async function(){$("lm").textContent="";
  try{await signInWithEmailAndPassword(auth,$("em").value.trim(),$("pin").value)}
  catch(e){$("lm").textContent=(/invalid-(login|credential)|wrong-password|user-not-found/.test(e.code)?"ኢሜይል ወይም የይለፍ ቃል ትክክል አይደለም።":"ስህተት: "+e.code);return}
+ await startApp()};
+var STARTED=false;
+async function startApp(){if(STARTED||!auth.currentUser)return;STARTED=true;try{await startApp0()}catch(e){STARTED=false}}
+onAuthStateChanged(auth,function(u){if(u)startApp()});
+async function startApp0(){
  isAdm=auth.currentUser.email.toLowerCase()===ADMIN;ME=null;
  if(!isAdm){try{isAdm=(await getDoc(doc(db,"admins",auth.currentUser.uid))).exists()}catch(e){}}
- if(!isAdm){var sd=await getDoc(doc(db,"staff",auth.currentUser.uid));if(!sd.exists()){await signOut(auth);$("lm").textContent="ይህ መለያ በ Admin አልተመዘገበም።";return}ME=sd.data()}
+ if(!isAdm){var sd=await getDoc(doc(db,"staff",auth.currentUser.uid));if(!sd.exists()){STARTED=false;await signOut(auth);$("lm").textContent="ይህ መለያ በ Admin አልተመዘገበም።";return}ME=sd.data()}
  try{var ss=await getDocs(collection(db,"students")),cf=await getDoc(doc(db,"config","subjects")),cc=await getDoc(doc(db,"config","classes")),cg=await getDoc(doc(db,"config","grades")),cs=await getDoc(doc(db,"config","sem"));SM=cs.exists()?cs.data():{"1":true,"2":true};
   if(ss.empty&&D.s.length&&confirm("ዳታቤዙ ባዶ ነው። በዚህ ስልክ ላይ ያሉ "+D.s.length+" ተማሪዎች ወደ ዳታቤዝ ይጫኑ?")){ids=new Set();await syncAll()}
   else{D={s:ss.docs.map(function(d){return d.data()}),sub:cf.exists()?toSub(cf.data()):null,cl:cc.exists()?cc.data().list:[],cb:cc.exists()?(cc.data().map||{}):{},gs:cg.exists()?cg.data().gs:null,pm:cg.exists()?cg.data().pm:null,gv:cg.exists()?cg.data().gv:null,rc:cg.exists()?(cg.data().rc||[]):[],v:2};norm();ids=new Set(D.s.map(function(x){return x.id}));last={};D.s.forEach(function(s){last[s.id]=JSON.stringify(s)})}
   renderSubs();$("lg").classList.add("hide");$("tp").classList.remove("hide");draw();
-  document.body.classList.toggle("tch",!isAdm);mlFill();if(ME)$("m_t").value=ME.name;loadCp();loadInbox();loadRp();loadMc();loadLv();loadDc();loadDp();loadNt();if(isAdm){$("ad").classList.remove("hide");loadAd()}else $("ad").classList.add("hide")}
- catch(e){$("lm").textContent="ዳታ ማንበብ አልተሳካም: "+e.code}};
-var out0=window.out;window.out=function(){out0();$("ad").classList.add("hide");signOut(auth)};
+  document.body.classList.toggle("tch",!isAdm);mlFill();if(ME)$("m_t").value=ME.name;loadCp();loadInbox();loadRp();loadMc();loadLv();loadDc();loadDp();loadNt();if(isAdm){$("ad").classList.remove("hide");loadAd()}else $("ad").classList.add("hide");
+  try{if(sessionStorage.getItem("nx_pick")){sessionStorage.removeItem("nx_pick");var cx=JSON.parse(localStorage.getItem("nx_ctx")||"null");if(cx){if(cx.g){$("m_g").value=cx.g;if($("m_gs"))$("m_gs").value=cx.g}if(cx.s)$("m_s").value=cx.s;if(cx.q)$("m_q").value=cx.q;window.mlOpen().then(function(){$("mm").textContent="ገጹ ስለታደሰ ፋይሉን አንድ ጊዜ እንደገና ይምረጡ።"})}}}catch(e){}}
+ catch(e){STARTED=false;$("lm").textContent="ዳታ ማንበብ አልተሳካም: "+e.code}}
+var out0=window.out;window.out=function(){out0();STARTED=false;try{sessionStorage.removeItem("nx_pick")}catch(e){}$("ad").classList.add("hide");signOut(auth)};
 window.chPin=function(){sendPasswordResetEmail(auth,auth.currentUser.email).then(function(){alert("የይለፍ ቃል መቀየሪያ ኢሜይል ተልኳል")}).catch(function(e){alert(e.code)})};
 
 var ADMIN="denekewbamlaku2127@gmail.com",BR=[],ST=[],AD=[];
@@ -514,18 +520,19 @@ var mf1=window.mlFill;window.mlFill=function(){mf1();if(!isAdm&&ME){var c=$("m_s
  $("m_s").innerHTML=SUB.filter(function(x){return(ME.sub||[]).indexOf(x[0])>-1}).map(function(x){return'<option value="'+x[0]+'">'+esc(x[1])+'</option>'}).join("");if(c)$("m_s").value=c;
  $("gl").innerHTML=(ME.cls||[]).map(function(x){return'<option value="'+esc(x)+'">'}).join("")}};
 /* teacher: class drop list limited to assigned classes */
-function gsBuild(){var inp=$("m_g"),sl=$("m_gs");
+function gsOne(iid,sid){var inp=$(iid),sl=$(sid);if(!inp)return;
  if(isAdm||!ME){if(sl)sl.classList.add("hide");inp.classList.remove("hide");return}
  var cls=ME.cls||[];
- if(!sl){sl=document.createElement("select");sl.id="m_gs";inp.parentNode.insertBefore(sl,inp.nextSibling);sl.onchange=function(){inp.value=sl.value}}
+ if(!sl){sl=document.createElement("select");sl.id=sid;inp.parentNode.insertBefore(sl,inp.nextSibling);sl.onchange=function(){inp.value=sl.value}}
  var cur=mcls(inp.value)||sl.value;
  sl.innerHTML=cls.map(function(x){return'<option value="'+esc(x)+'">'+esc(x)+'</option>'}).join("");
  if(cur&&cls.indexOf(cur)>-1)sl.value=cur;inp.value=sl.value||"";
  sl.classList.remove("hide");inp.classList.add("hide")}
+function gsBuild(){gsOne("m_g","m_gs");gsOne("mc_c","mc_cs")}
 var mf2=window.mlFill;window.mlFill=function(){mf2();gsBuild()};
 var mlOpen0=window.mlOpen;
 function mcls(g){return(ME&&ME.cls||[]).filter(function(c){return c.trim().toLowerCase()===g.trim().toLowerCase()})[0]}
-window.mlOpen=async function(){var g=$("m_g").value.trim(),sub=$("m_s").value,sem=$("m_q").value;
+window.mlOpen=async function(){var g=$("m_g").value.trim(),sub=$("m_s").value,sem=$("m_q").value;try{localStorage.setItem("nx_ctx",JSON.stringify({g:g,s:sub,q:sem}))}catch(e){}
  if(!isAdm){var cg=mcls(g);if(!cg||(ME.sub||[]).indexOf(sub)<0){$("mm").textContent="ይህ ክፍል ወይም ትምህርት አልተመደበልዎትም። የተመደቡልዎት ክፍሎች፦ "+((ME.cls||[]).join(", ")||"ምንም")+"። ትምህርቶች፦ "+((ME.subjects||"")||"ምንም");return}g=cg;$("m_g").value=cg}
  var L=D.s.filter(function(x){return x.gr===g});$("mm").textContent="እየጫነ...";
  var R=await Promise.all(L.map(function(s){return getDoc(doc(db,"marks",s.id+"_"+sub+"_"+sem)).catch(function(){return null})}));
