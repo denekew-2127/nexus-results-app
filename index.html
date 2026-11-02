@@ -40,7 +40,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
 .dv img{width:100%;height:100%;border-radius:50%;object-fit:cover;object-position:center 15%;border:3px solid var(--bg);display:block}
 @keyframes dsp{to{filter:hue-rotate(360deg)}}@keyframes dfl{50%{transform:translateY(-5px)}}
 .tsd{border:1px solid var(--bd);border-radius:8px;background:var(--bg);padding:8px 10px}.tsd summary{cursor:pointer;font-size:14px}.tsbox{display:flex;flex-direction:column;gap:6px;margin-top:8px}.tsbox label{display:flex;align-items:center;gap:8px;margin:0;font-size:14px}.tsbox input{width:auto;margin:0}
-.dh{background:linear-gradient(135deg,#1d4ed8,#14213d);color:#fff;border-radius:12px;padding:16px;margin-bottom:12px}.dh h2{color:#fff;font-size:18px;margin:0 0 4px}.dh p{margin:0;font-size:13px;opacity:.85}
+.dh{background:linear-gradient(135deg,#1d4ed8,#14213d);color:#fff;border-radius:12px;padding:16px;margin-bottom:12px}.dh h2{color:#fff;font-size:18px;margin:0 0 4px}.dh p{margin:0;font-size:13px;opacity:.85}.dh .btn{margin:10px 6px 0 0;padding:6px 12px;font-size:13px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.35);color:#fff}
 .tl{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:12px 0}.tl div{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:10px;text-align:center}.tl b{display:block;font-size:22px;color:var(--pr)}.tl span{font-size:12px;color:var(--mu)}
 .pb{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:4px 0 10px}.pb i{display:block;height:100%;background:var(--ok)}.pb i.b2{background:var(--pr)}
 .qa{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.qa .btn{margin-top:0;padding:8px 12px;font-size:14px}
@@ -142,7 +142,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v3</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v5</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
@@ -533,7 +533,7 @@ function dsBtns(a){return'<div class="qa">'+a.map(function(x){return'<button cla
 window.dsGo=function(id){var e=$(id);if(e)e.scrollIntoView({behavior:"smooth",block:"start"})};
 function dashDraw(){var d=$("dsh");if(!d||!auth.currentUser)return;
  var S=D.s||[],h='',nameS=isAdm?"Admin":((ME&&ME.name)||""),cmpl=dsNum("cc",/\((\d+)/);
- h+='<div class="dh"><h2>'+dsGreet()+', '+esc(nameS)+' 👋</h2><p>'+new Date().toLocaleDateString()+' · '+(isAdm?'Admin Dashboard':esc(ROLE[ME&&ME.role]||"መምህር")+' Dashboard')+'</p></div>';
+ h+='<div class="dh"><h2>'+dsGreet()+', '+esc(nameS)+' 👋</h2><p>'+new Date().toLocaleDateString()+' · '+(isAdm?'Admin Dashboard':esc(ROLE[ME&&ME.role]||"መምህር")+' Dashboard')+'</p><button class="btn" onclick="chPin()">🔑 የይለፍ ቃል ቀይር</button><button class="btn" onclick="out()">🚪 ውጣ (Logout)</button></div>';
  if(isAdm){
   var m=S.filter(function(x){return/^m/i.test(x.g||"")}).length,f=S.filter(function(x){return/^f/i.test(x.g||"")}).length,byC={};
   S.forEach(function(x){(byC[x.gr]=byC[x.gr]||[]).push(x)});var cn=Object.keys(byC).sort(cmp);
@@ -541,7 +541,6 @@ function dashDraw(){var d=$("dsh");if(!d||!auth.currentUser)return;
   h+=dsBtns([["mk","📋 Marklist"],["ad","🛡 Admin"],["lv","🗓 ፈቃድ"],["cp","📨 ቅሬታ"]]);
   var mx=Math.max.apply(null,cn.map(function(c){return byC[c].length}).concat([1]));
   h+='<h2 style="margin-top:6px">ተማሪዎች በክፍል</h2>'+(cn.map(function(c){var n=byC[c].length,pc=Math.round(n/mx*100);return'<div style="font-size:13px;display:flex;justify-content:space-between"><span>'+esc(c)+'</span><b>'+n+'</b></div><div class="pb"><i style="width:'+pc+'%"></i></div>'}).join("")||'<div class="msg">ተማሪ የለም።</div>');
-  h+='<details><summary style="cursor:pointer;font-weight:600;margin:6px 0">📊 የውጤት አሞላል በክፍል (Sem I / II)</summary>'+cn.map(function(c){var L=byC[c],t=L.length*SUB.length,a1=0,a2=0;SUB.forEach(function(sb){a1+=dsFill(L,sb[0],"1");a2+=dsFill(L,sb[0],"2")});return dsBar(c+" · Sem I",a1,t)+dsBar(c+" · Sem II",a2,t,"b2")}).join("")+'</details>';
   try{var tp=topL().slice(0,3);if(tp.length)h+='<h2 style="margin-top:10px">🏆 ከፍተኛ 3</h2>'+tp.map(function(x,i){return'<div style="font-size:14px;padding:3px 0">'+(i+1)+'. <b>'+esc(x.name)+'</b> ('+esc(x.gr)+') — '+r2(calc(x).avg)+'</div>'}).join("")}catch(e){}
  }else{
   var cls=(ME&&ME.cls)||[],subs=(ME&&ME.sub)||[],mine=S.filter(function(x){return cls.indexOf(x.gr)>-1});
