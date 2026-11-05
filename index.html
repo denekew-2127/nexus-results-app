@@ -45,6 +45,9 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
 .pb{height:8px;background:var(--bd);border-radius:6px;overflow:hidden;margin:4px 0 10px}.pb i{display:block;height:100%;background:var(--ok)}.pb i.b2{background:var(--pr)}
 .qa{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.qa .btn{margin-top:0;padding:8px 12px;font-size:14px}
 #wel{position:fixed;inset:0;z-index:999;background:linear-gradient(160deg,#14213d,#1d4ed8);color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px}#wel.hide{display:none}
+#ced{position:fixed;inset:0;z-index:998;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:14px}#ced.hide{display:none}
+#ced .bx{background:var(--cd,#fff);color:var(--tx,#111);border:1px solid var(--bd);border-radius:12px;max-width:420px;width:100%;max-height:85vh;overflow:auto;padding:14px}
+#ced label{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:14px}#ced input{width:auto;margin:0}
 </style></head><body>
 <header><img src="logo.png" alt="" style="width:64px;height:64px;border-radius:50%;background:#fff;margin-bottom:6px" onerror="this.style.display='none'"><h1>Nexus Academy</h1><p>የተማሪ ውጤት ሲስተም</p></header>
 <div class="tabs"><button id="t1" class="on" onclick="tab(1)">🎓 ተማሪ</button><button id="t2" onclick="tab(2)">👩‍🏫 መምህር</button></div>
@@ -102,7 +105,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
    <div class="grid"><div><label>ስም</label><input id="tn"></div><div><label>ኢሜይል</label><input id="te" type="email"></div>
    <div><label>የይለፍ ቃል (ቢያንስ 8)</label><input id="tpw" type="password"></div>
    <div><label>ሚና</label><select id="tr"><option value="teacher">መምህር</option><option value="homeroom">Homeroom መምህር</option><option value="director">የቅርንጫፍ ዳይሬክተር</option></select></div>
-   <div><label>ቅርንጫፍ</label><select id="tb"></select></div><div><label>ትምህርቶች (ከዝርዝሩ ይምረጡ)</label><input id="ts" type="hidden"><details class="tsd"><summary id="ts_sum">ትምህርት ይምረጡ ▾</summary><div id="ts_box" class="tsbox"></div></details></div><div><label>ክፍሎች (ምሳሌ: 4,5,6,7,8 ወይም 2A, 7B)</label><input id="tc" placeholder="4,5,6 ወይም 2A, 7B"></div></div>
+   <div><label>ቅርንጫፍ</label><select id="tb"></select></div><div><label>ትምህርቶች (ከዝርዝሩ ይምረጡ)</label><input id="ts" type="hidden"><details class="tsd"><summary id="ts_sum">ትምህርት ይምረጡ ▾</summary><div id="ts_box" class="tsbox"></div></details></div><div><label>ክፍሎች (የተመረጠው ቅርንጫፍ ክፍሎች ብቻ)</label><input id="tc" type="hidden"><details class="tsd"><summary id="tc_sum">ክፍል ይምረጡ ▾</summary><div id="tc_box" class="tsbox"></div></details></div></div>
    <button class="btn" onclick="addStaff()">መምህር ጨምር</button><div id="am" class="msg"></div></div>
   <div class="card adm" id="dp"><h2>🏢 ዲፓርትመንቶች</h2><div id="dpl"></div><div class="grid"><div><label>የ department ስም</label><input id="dp_n" placeholder="ሳይንስና ቴክኖሎጂ"></div><div><label>ተጠሪ</label><select id="dp_h"></select></div></div><button class="btn" onclick="addDp()">ጨምር</button><div id="dp_m" class="msg"></div></div>
   <div class="card hide" id="nt"><h2>📢 ለወላጆች ማስታወቂያ (Homeroom)</h2><div class="grid"><div><label>ክፍል</label><input id="nt_c" list="gl" placeholder="Grade 8A"></div><div><label>ርዕስ</label><input id="nt_t"></div></div><textarea id="nt_x" rows="3" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit"></textarea><button class="btn" onclick="addNt()">አትም</button><div id="nt_m" class="msg"></div><div id="ntl"></div></div>
@@ -122,6 +125,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
    </div>
    <button class="btn" onclick="mlOpen()">ማርክሊስት ክፈት</button> <button class="btn adm" onclick="pubCl()">📤 ውጤት አትም (Admin)</button> <button class="btn adm" onclick="tmpCards()">🖨 ጊዜያዊ ካርድ (Open house)</button> <button class="btn adm" onclick="rcClass()">📘 Report cards (ክፍል)</button> <button class="btn g hide" id="tfb" onclick="transferXl()">📊 Transfer sheet (Excel)</button>
    <button class="btn g" onclick="xlExport()">⬇ Excel አውርድ</button> <label class="btn g" style="display:inline-block;cursor:pointer">⬆ Excel አስገባ<input type="file" accept=".xlsx,.xls,.csv" hidden onclick="try{sessionStorage.setItem('nx_pick','1')}catch(e){}" oncancel="try{sessionStorage.removeItem('nx_pick')}catch(e){}" onchange="xlImport(this.files[0]);this.value=''"></label>
+   <div class="adm" style="margin:6px 0"><label>ቅርንጫፍ (ለሚመዘገቡ ተማሪዎች)</label><select id="ri_b"></select><label>የክፍል ስም ቅጥያ (ለምሳሌ Selamber — ለዋናው ግቢ ባዶ ይተዉ)</label><input id="ri_s" placeholder="Selamber"></div>
    <label class="btn g adm" style="display:inline-block;cursor:pointer">👥 ተማሪዎችን ከ Excel (ሁሉም ሉሆች)<input type="file" accept=".xlsx,.xls" hidden onchange="rosterImport(this.files[0]);this.value=''"></label>
    <label class="btn g adm" style="display:inline-block;cursor:pointer">👤 አንድ ክፍል ከ Excel<input type="file" accept=".xlsx,.xls" hidden onchange="rosterImport(this.files[0],$('m_g').value.trim());this.value=''"></label> <button class="btn g adm" onclick="tplRoster()">📄 Roster template</button>
    <button class="btn g adm" onclick="rosterXl()">🧾 Roster (ሁሉም ክፍሎች)</button> <button class="btn g hide" id="rfb" onclick="rosterOne()">🧾 Roster (ይህ ክፍል)</button>
@@ -142,7 +146,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v5</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v8</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
@@ -288,9 +292,9 @@ function xlImport(f){try{sessionStorage.removeItem("nx_pick")}catch(e){}if(!f)re
   }catch(e){$("mm").textContent="ፋይሉን ማንበብ አልተሳካም: "+((e&&e.message)||"")}};
   r.readAsArrayBuffer(f)};
  if(!$("mt").querySelector("tr[data-i]")&&typeof window.mlOpen==="function"){Promise.resolve(window.mlOpen()).then(run,run)}else run()}
-function rosterImport(f,one){if(!f)return;var r=new FileReader();r.onload=function(){try{var wb=XLSX.read(r.result,{type:"array"}),seen={},add=0,skip=[],yr=String($("f_y").value||"2018"),mx=0;
+function rosterImport(f,one){if(!f)return;var r=new FileReader();r.onload=function(){try{var wb=XLSX.read(r.result,{type:"array"}),seen={},add=0,skip=[],yr=String($("f_y").value||"2018"),mx=0,mv=0,sx=($("ri_s").value||"").trim(),SFX=sx?" ("+sx+")":"",BO=(window.BR||BR||[]).filter(function(y){return y.id===$("ri_b").value})[0];
  D.s.forEach(function(x){var m=/^NX\d+-(\d+)$/.exec(x.id);if(m)mx=Math.max(mx,+m[1])});
- wb.SheetNames.forEach(function(n){if(isTransfer(wb.Sheets[n]))return;var m=/(\d+)\s*([A-Za-z]?)/.exec(n),pg=m?"Grade "+m[1]+m[2].toUpperCase():null,gr=one||pg;
+ wb.SheetNames.forEach(function(n){if(isTransfer(wb.Sheets[n]))return;var m=/(\d+)\s*([A-Za-z]?)/.exec(n),bs=m?"Grade "+m[1]+m[2].toUpperCase():null,pg=bs?bs+SFX:null,gr=one||pg;
   if(one&&wb.SheetNames.length>1&&(!pg||pg.toLowerCase()!==one.toLowerCase()))return;
   if(!gr){skip.push(n);return}
   if(seen[gr]){skip.push(n);return}seen[gr]=1;
@@ -298,10 +302,10 @@ function rosterImport(f,one){if(!f)return;var r=new FileReader();r.onload=functi
   for(var i=0;i<A.length&&h<0;i++){var q=A[i].map(nm);if(q.indexOf("studentname")>-1){h=i;cn=q.indexOf("studentname");cs=q.indexOf("sex");ca=q.indexOf("age")}}
   if(h<0){skip.push(n);return}
   for(var i=h+1;i<A.length;i++){var no=A[i][0],nv=String(A[i][cn]).replace(/\s+/g," ").trim();if(no===""||isNaN(+no)||!nv)continue;
-   if(D.s.some(function(x){return x.gr===gr&&nm(x.name)===nm(nv)}))continue;L.push({n:nv.toUpperCase(),g:/^f/i.test(String(A[i][cs]))?"Female":"Male",age:(ca>-1&&A[i][ca]!==""&&!isNaN(+A[i][ca]))?+A[i][ca]:null})}
+   if(D.s.some(function(x){return x.gr===gr&&nm(x.name)===nm(nv)}))continue;var ex=(SFX&&bs&&bs!==gr)?D.s.filter(function(x){return x.gr===bs&&nm(x.name)===nm(nv)})[0]:null;if(ex){ex.gr=gr;mv++;if(BO)D.cb[gr]={id:BO.id,name:BO.name};continue}L.push({n:nv.toUpperCase(),g:/^f/i.test(String(A[i][cs]))?"Female":"Male",age:(ca>-1&&A[i][ca]!==""&&!isNaN(+A[i][ca]))?+A[i][ca]:null})}
   L.sort(function(a,b){return a.n.localeCompare(b.n)});
-  L.forEach(function(x){mx++;D.s.push({id:"NX"+yr.slice(-2)+"-"+String(mx).padStart(4,"0"),name:x.n,g:x.g,gr:gr,y:yr,z:$("f_z").value,w:$("f_w").value,age:x.age,a:{},ml:{}});add++})});
- persist();draw();mlFill();$("mm").textContent="✓ "+add+" ተማሪ ተጨመረ (በስም A–Z ተደርድረው፣ ቁጥር ተሰጥቷቸዋል)"+(skip.length?" — ያልተነበቡ ሉሆች: "+skip.join(", "):"")}catch(e){$("mm").textContent="ፋይሉን ማንበብ አልተሳካም"}};r.readAsArrayBuffer(f)}
+  L.forEach(function(x){mx++;D.s.push({id:"NX"+yr.slice(-2)+"-"+String(mx).padStart(4,"0"),name:x.n,g:x.g,gr:gr,y:yr,z:$("f_z").value,w:$("f_w").value,age:x.age,a:{},ml:{}});add++});if(L.length&&BO)D.cb[gr]={id:BO.id,name:BO.name}});
+ persist();draw();mlFill();$("mm").textContent="✓ "+add+" ተማሪ ተጨመረ"+(mv?"፣ "+mv+" ነባር ተማሪ ከ «ዋና» ክፍል ወደ አዲሱ ክፍል ተዛውረዋል":"")+" (በስም A–Z ተደርድረው፣ ቁጥር ተሰጥቷቸዋል)"+(skip.length?" — ያልተነበቡ ሉሆች: "+skip.join(", "):"")}catch(e){$("mm").textContent="ፋይሉን ማንበብ አልተሳካም"}};r.readAsArrayBuffer(f)}
 function isTransfer(ws){return XLSX.utils.sheet_to_json(ws,{header:1,defval:""}).slice(0,6).some(function(r){return r.some(function(c){return/transfer/i.test(String(c))})})}
 function rosterXl(only){var yr=String($("f_y").value||"2018"),all=only?[only]:Object.keys(clsAll()).sort(cmp),wb=XLSX.utils.book_new(),n0=0;
  all.forEach(function(g){var L=D.s.filter(function(x){return x.gr===g}).sort(function(a,b){return a.name.localeCompare(b.name)});if(!L.length)return;
@@ -755,6 +759,33 @@ var lcp0=window.loadCp;window.loadCp=async function(){await lcp0();dashDraw()};
 var llv0=loadLv;loadLv=async function(){await llv0();dashDraw()};
 var lad0=loadAd;loadAd=async function(){await lad0();dashDraw()};
 var mls0=window.mlSave;window.mlSave=async function(){await mls0();dashDraw()};
+
+/* class assignment limited to the teacher's branch */
+function tcBuild(){var box=$("tc_box");if(!box)return;var b=$("tb").value,sel=($("tc").value||"").split(",").map(function(x){return x.trim()}).filter(Boolean),
+ all=Object.keys(clsAll()).sort(cmp),cb=D.cb||{},mine=b?all.filter(function(c){return cb[c]&&cb[c].id===b}):[],list=mine.length?mine:all,hint="";
+ if(!b)hint='<div class="msg">መጀመሪያ ቅርንጫፍ ይምረጡ።</div>';else if(!mine.length)hint='<div class="msg">⚠ ለዚህ ቅርንጫፍ ክፍል አልተመደበም። ቅንብር → «ክፍሎች → ቅርንጫፍ» ይመድቡ፤ ለጊዜው ሁሉም ክፍሎች ይታያሉ።</div>';
+ box.innerHTML=hint+list.map(function(c){return'<label><input type="checkbox" value="'+esc(c)+'"'+(sel.indexOf(c)>-1?' checked':'')+'> '+esc(c)+'</label>'}).join("");tcSync()}
+function tcSync(){var c=[].slice.call($("tc_box").querySelectorAll("input:checked")).map(function(e){return e.value});$("tc").value=c.join(", ");$("tc_sum").textContent=c.length?c.join(", "):"ክፍል ይምረጡ ▾"}
+$("tc_box").addEventListener("change",tcSync);$("tb").addEventListener("change",function(){$("tc").value="";tcBuild()});
+/* edit classes of an existing teacher + warn about other-branch classes */
+function cedOpen(id){var t=ST.filter(function(x){return x.id===id})[0];if(!t)return;var cb=D.cb||{},all=Object.keys(clsAll()).sort(cmp),cur=t.cls||[],
+ rows=all.filter(function(c){return cur.indexOf(c)>-1||!cb[c]||cb[c].id===t.branch}),w=$("ced");
+ w.innerHTML='<div class="bx"><h2 style="margin-top:0">'+esc(t.name)+' — ክፍሎች</h2>'+rows.map(function(c){var tag=cb[c]&&cb[c].id!==t.branch?' <small style="color:#ef4444">⚠ '+esc(cb[c].name)+'</small>':(!cb[c]?' <small>(ቅርንጫፍ አልተመደበም)</small>':'');return'<label><input type="checkbox" value="'+esc(c)+'"'+(cur.indexOf(c)>-1?' checked':'')+'> '+esc(c)+tag+'</label>'}).join("")+
+  '<div style="display:flex;gap:8px;margin-top:10px"><button class="btn" id="ced_ok">አስቀምጥ</button><button class="btn g" id="ced_no">ተው</button></div><div class="msg" id="ced_m"></div></div>';
+ w.classList.remove("hide");$("ced_no").onclick=function(){w.classList.add("hide")};
+ $("ced_ok").onclick=async function(){var ch=[].slice.call(w.querySelectorAll("input:checked")).map(function(e){return e.value});
+  try{await setDoc(doc(db,"staff",id),{cls:ch},{merge:true});w.classList.add("hide");loadAd()}catch(e){$("ced_m").textContent="ስህተት: "+e.code}}}
+function tlFix(){var tb=$("tl");if(!tb)return;var rows=tb.querySelectorAll("tr"),cb=D.cb||{};
+ ST.forEach(function(t,i){var r=rows[i];if(!r||r.querySelector("[data-e]"))return;var c=r.querySelectorAll("td"),bad=(t.cls||[]).filter(function(x){return cb[x]&&cb[x].id!==t.branch});
+  if(c[2]&&bad.length)c[2].insertAdjacentHTML("beforeend",'<br><small style="color:#ef4444">⚠ ከሌላ ቅርንጫፍ: '+esc(bad.join(", "))+'</small>');
+  if(c[3])c[3].insertAdjacentHTML("afterbegin",'<button class="btn g" style="margin:0 0 4px;padding:4px 8px" data-e="'+esc(t.id)+'">✏️ ክፍሎች</button> ')})}
+$("tl").addEventListener("click",function(e){var i=e.target.getAttribute("data-e");if(i)cedOpen(i)});
+var rd9=rdAd;rdAd=function(){rd9();tlFix();tcBuild()};
+var as9=window.addStaff;window.addStaff=async function(){await as9();tcBuild()};
+
+function riBuild(){var b=$("ri_b");if(!b)return;var v=b.value;b.innerHTML='<option value="">— ቅርንጫፍ (አማራጭ) —</option>'+(BR||[]).map(function(x){return'<option value="'+esc(x.id)+'">'+esc(x.name)+'</option>'}).join("");b.value=v}
+var rd8=rdAd;rdAd=function(){rd8();riBuild()};
 </script>
 <div id="wel" class="hide"></div>
+<div id="ced" class="hide"></div>
 </body></html>
