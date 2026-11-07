@@ -97,6 +97,11 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
    <label>የውጤት ደረጃ (ነጥብ:ፊደል)</label><div class="grid"><div><input id="gs" placeholder="97:A,90:B,80:C,70:D,60:E,0:F"></div><div><button class="btn" onclick="setGs()">ደረጃ አስቀምጥ</button></div></div>
    <label>የማለፊያ ነጥብ (አማካይ)</label><div class="grid"><div><input id="pm" type="number" min="1" max="100" placeholder="50"></div><div><button class="btn" onclick="setPm()">ነጥብ አስቀምጥ</button></div></div>
    <label style="display:block;margin:10px 0"><input type="checkbox" id="gv" style="width:auto" onchange="setGv()"> የተማሪ ደረጃ ፊደል (A, B, C…) ለተማሪ አሳይ</label>
+   <div style="margin:10px 0"><b>📊 ለተማሪ የሚታዩ (አሳይ / ደብቅ)</b>
+    <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_c" style="width:auto" onchange="setRv()"> Class Rank (በክፍል ደረጃ)</label>
+    <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_b" style="width:auto" onchange="setRv()"> Branch Rank (በቅርንጫፍ ደረጃ)</label>
+    <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_s" style="width:auto" onchange="setRv()"> School Rank (በትምህርት ቤት ደረጃ)</label>
+    <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_p" style="width:auto" onchange="setRv()"> Percentile</label></div>
    <label>Report card የሚያካትተው ውጤት (ለምሳሌ CA ብቻ)</label><div><button class="btn g" onclick="rcPre('q1')">1ኛ ሩብ (35)</button> <button class="btn g" onclick="rcPre('all')">ሁሉም (100)</button></div><div id="rcb"></div><div id="rct" class="msg" style="color:var(--mu)"></div><button class="btn" onclick="setRc()">Report card ቅንብር አስቀምጥ</button>
    <label style="margin-top:12px">ክፍሎች</label><div class="tw"><table id="cl"></table></div>
    <div class="grid"><div><label>አዲስ ክፍል</label><input id="cn" placeholder="Grade 9A"></div><div style="align-self:end"><button class="btn" onclick="addCl()">ክፍል ጨምር</button></div></div><div id="cm" class="msg"></div>
@@ -147,7 +152,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v11</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v12</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
@@ -155,7 +160,7 @@ function load(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){D=null}
  if(!D||!D.s){D={pin:"1234",s:[{id:"0082347",name:"MOHAMMED ABDELLA SEMAN",g:"Male",gr:"Grade 8",y:"2018",z:"Gurage",w:"WOLKITE",a:{en:82,ci:88,ma:75,ss:90,gs:85,am:83}}],v:2}}
  norm()}
 function norm(){if(D.v!==2){var OM={en:60,ci:60,ma:40,ss:60,gs:60,am:60};D.s.forEach(function(x){for(var k in OM){if(x.a[k]!=null)x.a[k]=Math.round(x.a[k]/OM[k]*100)}});D.v=2}
- if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub;if(!D.cl)D.cl=[];if(!D.cb)D.cb={};if(!D.gs)D.gs="90:A,80:B,70:C,60:D,50:E,0:F";if(D.pm==null)D.pm=50;if(D.gv==null)D.gv=true}
+ if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub;if(!D.cl)D.cl=[];if(!D.cb)D.cb={};if(!D.gs)D.gs="90:A,80:B,70:C,60:D,50:E,0:F";if(D.pm==null)D.pm=50;if(D.gv==null)D.gv=true;if(D.rv==null)D.rv={c:true,b:true,s:true,p:true}}
 function persist(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
 load();
 function $(i){return document.getElementById(i)}
@@ -171,7 +176,7 @@ function look(){var q=$("rq").value.trim(),s=D.s.filter(function(x){return x.id=
 function card(s){var c=calc(s),ok=c.avg>=PM();
  return '<div class="card"><h2 style="text-align:center">Student Profile</h2><p style="text-align:center;font-weight:700;margin:6px 0 12px">'+esc(s.name)+'</p><div class="grid">'+
  [["Registration Number",s.id],["Nationality","Ethiopian"],["Gender",s.g],["Zone",s.z],["Grade",s.gr],["Woreda",s.w],["Academic Year",s.y],["School","NEXUS"]].map(function(p){return '<div><span style="font-size:12px;color:var(--mu)">'+p[0]+'</span><br><b>'+esc(p[1])+'</b></div>'}).join("")+
- '</div></div><div class="card"><h2>Result Summary</h2><div class="sum"><div><span>Total Score</span><b>'+r2(c.total)+'</b></div><div><span>Mark</span><b>'+c.mark+'</b></div><div><span>Percentile</span><b>'+r2(pct(s))+'</b></div><div><span>Average</span><b>'+r2(c.avg)+'</b></div><div><span>Status</span><span class="badge '+(ok?"p":"f")+'">'+(ok?"✓ Passed":"Failed")+'</span></div></div></div>'+
+ '</div></div><div class="card"><h2>Result Summary</h2><div class="sum"><div><span>Total Score</span><b>'+r2(c.total)+'</b></div><div><span>Mark</span><b>'+c.mark+'</b></div>'+(RV("p")?'<div><span>Percentile</span><b>'+r2(pct(s))+'</b></div>':'')+'<div><span>Average</span><b>'+r2(c.avg)+'</b></div><div><span>Status</span><span class="badge '+(ok?"p":"f")+'">'+(ok?"✓ Passed":"Failed")+'</span></div></div></div>'+
  '<div class="card"><h2>Subject Wise Results</h2><div class="tw"><table><tr><th>Subject</th><th>Answered</th><th>Score / 100</th></tr>'+
  c.rows.map(function(r){return '<tr><td>'+r.n+'</td><td>'+r.a+' / '+r.o+'</td><td>'+r2(r.sc)+' / 100</td></tr>'}).join("")+'</table></div></div>'}
 function login(){if($("pin").value===D.pin){$("lg").classList.add("hide");$("tp").classList.remove("hide");$("lm").textContent="";draw()}else $("lm").textContent="PIN ትክክል አይደለም።"}
@@ -355,7 +360,7 @@ function top20(){$("tt20").innerHTML='<tr><th>#</th><th>Name</th><th>Grade</th><
 function topXl(){var A=[["Rank","Name","Grade","Total","Average"]];topL().forEach(function(s,i){var c=calc(s);A.push([i+1,s.name,s.gr,+r2(c.total),+r2(c.avg)])});
  var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(A),"Top 20");XLSX.writeFile(wb,"top20.xlsx")}
 var card0=card;card=function(s){var h=card0(s),ca="";
- var rk=s.rk?'<div class="card"><h2>Rank</h2><div class="sum"><div><span>Class Rank</span><b>'+s.rk+' / '+s.cn+'</b></div><div><span>Class</span><b>'+esc(s.gr)+'</b></div>'+(s.br?'<div><span>Branch</span><b>'+esc(s.br)+'</b></div>':'')+(s.rb?'<div><span>Branch Rank</span><b>'+s.rb+' / '+s.nb+'</b></div>':'')+(s.ra?'<div><span>School Rank</span><b>'+s.ra+' / '+s.na+'</b></div>':'')+'</div></div>':'';
+ var rk=(s.rk&&(RV("c")||RV("b")||RV("s")))?'<div class="card"><h2>Rank</h2><div class="sum">'+(RV("c")?'<div><span>Class Rank</span><b>'+s.rk+' / '+s.cn+'</b></div>':'')+'<div><span>Class</span><b>'+esc(s.gr)+'</b></div>'+(s.br?'<div><span>Branch</span><b>'+esc(s.br)+'</b></div>':'')+(s.rb&&RV("b")?'<div><span>Branch Rank</span><b>'+s.rb+' / '+s.nb+'</b></div>':'')+(s.ra&&RV("s")?'<div><span>School Rank</span><b>'+s.ra+' / '+s.na+'</b></div>':'')+'</div></div>':'';
  SUB.forEach(function(x){["1","2"].forEach(function(z){var m=s.ml&&s.ml[x[0]+"_"+z];if(!m)return;
   ca+='<tr><td>'+esc(x[1])+' (S'+z+')</td>'+MC.map(function(c){return'<td>'+(m[c[0]]==null?"-":m[c[0]])+'</td>'}).join("")+'<td>'+(m.fe==null?"-":m.fe)+'</td></tr>'})});
  if(ca)ca='<div class="card"><h2>Continuous Assessment</h2><div class="tw"><table><tr><th>Subject</th>'+MC.map(function(c){return'<th>'+c[1]+'</th>'}).join("")+'<th>Final</th></tr>'+ca+'</table></div></div>';
@@ -410,6 +415,8 @@ mlFill();
 <script>
 function RCK(){var v=window.RCV!=null?window.RCV:D.rc;return v&&v.length?v:null}
 function GV(){var v=window.GVV!=null?window.GVV:D.gv;return v!==false}
+function RV(k){var v=window.RVV!=null?window.RVV:D.rv;return!v||v[k]!==false}
+function setRv(){D.rv={c:$("rv_c").checked,b:$("rv_b").checked,s:$("rv_s").checked,p:$("rv_p").checked};persist();$("cm").textContent="✓ የደረጃ/Percentile ማሳያ ቅንብር ተቀምጧል — ተማሪዎች ወዲያው ያዩታል"}
 function rcComps(){var C=MC.concat([["fe","Final",25]]),k=RCK();return k?C.filter(function(c){return k.indexOf(c[0])>-1}):C}
 function rcHtml(s,S){
  var C=rcComps(),mx=C.reduce(function(p,c){return p+c[2]},0),g=GV();
@@ -423,7 +430,7 @@ function rcHtml(s,S){
  +'<table style="width:100%;border-collapse:collapse;text-align:center" border="1" cellpadding="5"><tr style="background:#e8eefc"><th style="text-align:left">Subject</th><th>Semester I<br>('+mx+')</th><th>Semester II<br>('+mx+')</th><th>Average<br>('+mx+')</th>'+(g?'<th>Grade</th>':'')+'</tr>'
  +rows.map(function(r){return'<tr><td style="text-align:left">'+esc(r.n)+'</td><td>'+f(r.a)+'</td><td>'+f(r.b)+'</td><td><b>'+f(r.avg)+'</b></td>'+(g?'<td><b>'+(r.avg==null?"-":gl(pc(r.avg)))+'</b></td>':'')+'</tr>'}).join("")
  +'<tr style="background:#f3f4f6"><td style="text-align:left"><b>Total</b></td><td colspan="2"></td><td><b>'+r2(tot)+'</b></td>'+(g?'<td></td>':'')+'</tr><tr style="background:#f3f4f6"><td style="text-align:left"><b>Average</b></td><td colspan="2"></td><td><b>'+r2(av)+' ('+r2(pc(av))+'%)</b></td>'+(g?'<td><b>'+gl(pc(av))+'</b></td>':'')+'</tr></table>'
- +'<table style="width:100%;margin:10px 0" cellpadding="3"><tr><td><b>Class Rank:</b> '+(s.rk?s.rk+' / '+s.cn:'-')+'</td><td><b>Branch Rank:</b> '+(s.rb?s.rb+' / '+s.nb:'-')+'</td><td><b>School Rank:</b> '+(s.ra?s.ra+' / '+s.na:'-')+'</td></tr><tr><td colspan="3"><b>Result:</b> '+(got.length?(pc(av)>=PM()?"PASSED":"FAILED"):"-")+'</td></tr></table>'
+ +'<table style="width:100%;margin:10px 0" cellpadding="3"><tr>'+(RV("c")?'<td><b>Class Rank:</b> '+(s.rk?s.rk+' / '+s.cn:'-')+'</td>':'')+(RV("b")?'<td><b>Branch Rank:</b> '+(s.rb?s.rb+' / '+s.nb:'-')+'</td>':'')+(RV("s")?'<td><b>School Rank:</b> '+(s.ra?s.ra+' / '+s.na:'-')+'</td>':'')+'</tr><tr><td colspan="3"><b>Result:</b> '+(got.length?(pc(av)>=PM()?"PASSED":"FAILED"):"-")+'</td></tr></table>'
  +'<div style="margin-top:14px">Remarks: ________________________________________________</div>'
  +'<div style="display:flex;justify-content:space-between;margin-top:34px"><span>Homeroom Teacher: ____________</span><span>Director: ____________</span><span>Parent: ____________</span></div>'
  +'<div style="margin-top:14px;font-size:10px;color:#555;text-align:center">Nexus Academy · Wolkite · +251 944 299 218 · NexusAcademy2127@gmail.com</div></div>'}
@@ -463,7 +470,7 @@ async function syncAll(){var ops=[],nl={};
  rk2(D.s.slice(),"ra","na");var bg={};D.s.forEach(function(s){if(s.br)(bg[s.br]=bg[s.br]||[]).push(s);else{delete s.rb;delete s.nb}});Object.keys(bg).forEach(function(k){rk2(bg[k],"rb","nb")});
  D.s.forEach(function(s){s.pc=pct0(s);var j=JSON.stringify(s);if(last[s.id]!==j){nl[s.id]=j;ops.push(function(b){b.set(doc(db,"students",s.id),s)})}});
  ids.forEach(function(i){if(!D.s.some(function(x){return x.id===i}))ops.push(function(b){b.delete(doc(db,"students",i))})});
- ops.push(function(b){b.set(doc(db,"config","grades"),{gs:D.gs,pm:D.pm,gv:D.gv!==false,rc:D.rc||[]})});
+ ops.push(function(b){b.set(doc(db,"config","grades"),{gs:D.gs,pm:D.pm,gv:D.gv!==false,rc:D.rc||[],rv:D.rv||{c:true,b:true,s:true,p:true}})});
  ops.push(function(b){b.set(doc(db,"config","classes"),{list:D.cl||[],map:D.cb||{}})});
  ops.push(function(b){b.set(doc(db,"config","subjects"),{sub:D.sub.map(function(x){return{k:x[0],n:x[1],m:x[2]}})})});
  for(var i=0;i<ops.length;i+=400){var b=writeBatch(db);ops.slice(i,i+400).forEach(function(o){o(b)});await b.commit()}
@@ -477,7 +484,7 @@ window.look=async function(){var inp=$("rq"),q=inp.value.trim(),m=$("rm");$("res
  m.style.color="var(--mu)";m.textContent="⏳ እየፈለገ...";
  try{var r=await Promise.all([getDoc(doc(db,"students",q)),getDoc(doc(db,"config","subjects")),getDoc(doc(db,"config","grades")),getDoc(doc(db,"config","directory"))]),sd=r[0];
   if(!sd.exists()&&q.toUpperCase()!==q){var d2=await getDoc(doc(db,"students",q.toUpperCase()));if(d2.exists())sd=d2}
-  if(r[2].exists()){var cg=r[2].data();window.GSV=cg.gs;window.PMV=cg.pm;window.GVV=cg.gv;window.RCV=cg.rc}
+  if(r[2].exists()){var cg=r[2].data();window.GSV=cg.gs;window.PMV=cg.pm;window.GVV=cg.gv;window.RCV=cg.rc;window.RVV=cg.rv}
   DIR=r[3].exists()?r[3].data().t:[];m.style.color="";
   if(!sd.exists()){m.textContent="የምዝገባ ቁጥር «"+q+"» አልተገኘም። ቁጥሩን አረጋግጠው ደግመው ይሞክሩ፣ ወይም ትምህርት ቤቱን ይጠይቁ።";return}
   var st=sd.data();m.textContent=(Object.keys(st.a||{}).length||Object.keys(st.ml||{}).length)?"":"ለ «"+st.name+"» ውጤት ገና አልታተመም።";
@@ -497,7 +504,7 @@ async function startApp0(){
  if(!isAdm){var sd=await getDoc(doc(db,"staff",auth.currentUser.uid));if(!sd.exists()){STARTED=false;await signOut(auth);$("lm").textContent="ይህ መለያ በ Admin አልተመዘገበም።";return}ME=sd.data()}
  try{var ss=await getDocs(collection(db,"students")),cf=await getDoc(doc(db,"config","subjects")),cc=await getDoc(doc(db,"config","classes")),cg=await getDoc(doc(db,"config","grades")),cs=await getDoc(doc(db,"config","sem"));SM=cs.exists()?cs.data():{"1":true,"2":true};
   if(ss.empty&&D.s.length&&confirm("ዳታቤዙ ባዶ ነው። በዚህ ስልክ ላይ ያሉ "+D.s.length+" ተማሪዎች ወደ ዳታቤዝ ይጫኑ?")){ids=new Set();await syncAll()}
-  else{D={s:ss.docs.map(function(d){return d.data()}),sub:cf.exists()?toSub(cf.data()):null,cl:cc.exists()?cc.data().list:[],cb:cc.exists()?(cc.data().map||{}):{},gs:cg.exists()?cg.data().gs:null,pm:cg.exists()?cg.data().pm:null,gv:cg.exists()?cg.data().gv:null,rc:cg.exists()?(cg.data().rc||[]):[],v:2};norm();ids=new Set(D.s.map(function(x){return x.id}));last={};D.s.forEach(function(s){last[s.id]=JSON.stringify(s)})}
+  else{D={s:ss.docs.map(function(d){return d.data()}),sub:cf.exists()?toSub(cf.data()):null,cl:cc.exists()?cc.data().list:[],cb:cc.exists()?(cc.data().map||{}):{},gs:cg.exists()?cg.data().gs:null,pm:cg.exists()?cg.data().pm:null,gv:cg.exists()?cg.data().gv:null,rc:cg.exists()?(cg.data().rc||[]):[],rv:cg.exists()?(cg.data().rv||null):null,v:2};norm();ids=new Set(D.s.map(function(x){return x.id}));last={};D.s.forEach(function(s){last[s.id]=JSON.stringify(s)})}
   renderSubs();$("lg").classList.add("hide");$("tp").classList.remove("hide");draw();
   document.body.classList.toggle("tch",!isAdm);mlFill();if(ME)$("m_t").value=ME.name;loadCp();loadInbox();loadRp();loadMc();loadLv();loadDc();loadDp();loadNt();if(isAdm){$("ad").classList.remove("hide");loadAd()}else $("ad").classList.add("hide");dashDraw();showWel();
   try{if(sessionStorage.getItem("nx_pick")){sessionStorage.removeItem("nx_pick");var cx=JSON.parse(localStorage.getItem("nx_ctx")||"null");if(cx){if(cx.g){$("m_g").value=cx.g;if($("m_gs"))$("m_gs").value=cx.g}if(cx.s)$("m_s").value=cx.s;if(cx.q)$("m_q").value=cx.q;window.mlOpen().then(function(){$("mm").textContent="ገጹ ስለታደሰ ፋይሉን አንድ ጊዜ እንደገና ይምረጡ።"})}}}catch(e){}}
@@ -762,7 +769,7 @@ $("tl").addEventListener("click",async function(e){var id=e.target.getAttribute(
 var rd5=rdAd;rdAd=function(){rd5();$("pm").value=D.pm;$("gs").value=D.gs};
 
 function semAvgPct(s,sub,sem,m){var t=0;for(var k in m)t+=m[k];var o=sem==="1"?"2":"1",om=s.ml&&s.ml[sub+"_"+o];if(!om)return t;var u=0;for(var k2 in om)u+=om[k2];return(t+u)/2}
-var rd6=rdAd;rdAd=function(){rd6();$("gv").checked=D.gv!==false;rcDraw()};
+var rd6=rdAd;rdAd=function(){rd6();$("gv").checked=D.gv!==false;var rv0=D.rv||{};["c","b","s","p"].forEach(function(k){$("rv_"+k).checked=rv0[k]!==false});rcDraw()};
 
 window.rosterOne=function(){var g=$("m_g").value.trim();if(!isAdm&&!(ME&&ME.role==="homeroom"&&(ME.cls||[]).indexOf(g)>-1)){$("mm").textContent="ለዚህ ክፍል Homeroom መምህር ወይም Admin ብቻ።";return}rosterXl(g)};
 var rd7=rdAd;rdAd=function(){rd7();$("cb_all").innerHTML=BR.map(function(b){return'<option value="'+b.id+'">'+esc(b.name)+'</option>'}).join("")};
