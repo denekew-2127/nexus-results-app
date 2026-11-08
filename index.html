@@ -55,7 +55,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
 <section id="v1">
  <div class="card"><h2>ውጤት ይመልከቱ</h2>
   <label>የምዝገባ ቁጥር (Registration Number)</label>
-  <input id="rq" autocapitalize="characters" autocomplete="off" placeholder="ለምሳሌ NX18-0001" onkeydown="if(event.key==='Enter')look()">
+  <input id="rq" autocapitalize="characters" autocomplete="off" placeholder="ለምሳሌ NE1234567890" onkeydown="if(event.key==='Enter')look()">
   <button class="btn" onclick="look()">ውጤት አሳይ</button><div id="rm" class="msg"></div></div>
  <div id="res"></div>
 </section>
@@ -68,7 +68,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
   <div class="card adm"><h2 id="ft">አዲስ ተማሪ ጨምር</h2>
    <div class="grid">
     <div style="grid-column:1/3"><label>ሙሉ ስም</label><input id="f_name"></div>
-    <div><label>የምዝገባ ቁጥር</label><input id="f_id" inputmode="numeric"></div>
+    <div><label>የምዝገባ ቁጥር</label><input id="f_id" placeholder="ባዶ ይተዉ — በራሱ ይሰጣል (NE…)"></div>
     <div><label>ጾታ</label><select id="f_g"><option>Male</option><option>Female</option></select></div>
     <div><label>ክፍል (Grade)</label><input id="f_gr" value="Grade 8"></div><div><label>ፎቶ</label><input id="f_ph" type="file" accept="image/*" onchange="phPick(this.files[0])"></div>
     <div><label>የትምህርት ዘመን</label><input id="f_y" value="2018"></div>
@@ -138,7 +138,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
    <div class="tw"><table id="mt"></table></div>
    <button class="btn hide" id="mb" onclick="mlSave()">ውጤት አስቀምጥ</button><div id="mm" class="msg"></div>
    <h2 class="adm" style="margin-top:14px">ተማሪዎችን በአንድ ጊዜ ጨምር</h2>
-   <textarea class="adm" id="bk" rows="4" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit" placeholder="በየመስመሩ: የምዝገባ ቁጥር, ስም, M ወይም F"></textarea>
+   <textarea class="adm" id="bk" rows="4" style="width:100%;padding:10px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx);font:inherit" placeholder="በየመስመሩ: * , ስም, M ወይም F  (* = ቁጥር በራሱ ይሰጣል)"></textarea>
    <button class="btn g adm" onclick="bulk()">ጨምር</button></div>
   <div class="card adm"><h2>🏆 ደረጃ (Top 20)</h2><div class="grid"><div><label>ክልል</label><select id="t_s"><option value="all">ሁሉም ቅርንጫፍ (አጠቃላይ)</option></select></div></div>
    <button class="btn" onclick="top20()">አሳይ</button> <button class="btn g" onclick="topXl()">⬇ Excel</button><div class="tw"><table id="tt20"></table></div></div>
@@ -146,13 +146,14 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
    <button class="btn g" onclick="chPin()">የይለፍ ቃል ቀይር (ኢሜይል ይላካል)</button>
    <button class="btn g" onclick="expXl()">📊 ዳታ ላክ (Excel)</button>
     <button class="btn g" onclick="exp()">💾 Backup ለመመለስ (JSON)</button>
+    <button class="btn g" onclick="migrateIds()">🔐 ለነባር ተማሪዎች አዲስ ID ስጥ</button>
    <button class="btn g" onclick="document.getElementById('imp').click()">ዳታ አስገባ</button>
    <input id="imp" type="file" accept=".json" class="hide" onchange="imp(this)">
    <button class="btn g" onclick="out()">ውጣ</button></div>
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v12</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v14</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
@@ -197,7 +198,17 @@ $("sl").onclick=function(e){var i=e.target.getAttribute("data-x");if(i===null)re
 renderSubs();
 var edit=null;
 function clearForm(){edit=null;window.PH=null;if($("f_ph"))$("f_ph").value="";["name","id"].forEach(function(k){$("f_"+k).value=""});SUB.forEach(function(x){$("s_"+x[0]).value=""});$("ft").textContent="አዲስ ተማሪ ጨምር";$("fm").textContent=""}
-function save(){var id=$("f_id").value.trim(),nm=$("f_name").value.trim().toUpperCase();
+function newId(){var id;do{var a=new Uint32Array(2);(window.crypto||window.msCrypto).getRandomValues(a);id="NE"+String(a[0]%100000).padStart(5,"0")+String(a[1]%100000).padStart(5,"0")}while(D.s.some(function(x){return x.id===id}));return id}
+function migrateIds(){var old=D.s.filter(function(x){return!/^NE\d{10}$/.test(x.id)});
+ if(!old.length){alert("ሁሉም ተማሪ አዲስ ID (NE…) አላቸው።");return}
+ if(D.s.some(function(x){return Object.keys(x.ml||{}).length||Object.keys(x.a||{}).some(function(k){return+x.a[k]>0})})){alert("ውጤት የገባላቸው ተማሪዎች አሉ። ID መቀየር የሚቻለው ውጤት ከመግባቱ በፊት ብቻ ነው፣ ያለበለዚያ ውጤቱ ከተማሪው ጋር ያለው ግንኙነት ይጠፋል።");return}
+ if(!confirm(old.length+" ተማሪ አዲስ የማይገመት ID (NE + 10 ቁጥር) ይሰጣቸዋል።\n• የድሮ ID ከዚህ በኋላ አይሠራም።\n• የታተሙ ID cards እንደገና መታተም አለባቸው።\n• የድሮ→አዲስ ዝርዝር በ Excel ይወርዳል።\nይቀጥል?"))return;
+ var map=[["የድሮ ID","አዲስ ID","ስም","ክፍል"]];
+ old.forEach(function(s){var o=s.id;s.id=newId();map.push([o,s.id,s.name,s.gr])});
+ persist();draw();mlFill();
+ if(typeof XLSX!=="undefined"){var wb=XLSX.utils.book_new();XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(map),"ID map");XLSX.writeFile(wb,"nexus-new-ids-"+new Date().toISOString().slice(0,10)+".xlsx")}
+ alert("✓ "+old.length+" ተማሪ አዲስ ID ተሰጣቸው። የድሮ→አዲስ ዝርዝር ወርዷል — ያስቀምጡት።")}
+function save(){var id=$("f_id").value.trim()||newId(),nm=$("f_name").value.trim().toUpperCase();
  if(!id||!nm){$("fm").textContent="ስም እና የምዝገባ ቁጥር ያስፈልጋል።";return}
  var a={};for(var i=0;i<SUB.length;i++){var v=+$("s_"+SUB[i][0]).value;if(v<0||v>SUB[i][2]){$("fm").textContent=SUB[i][1]+": ከ0 እስከ "+SUB[i][2]+" ብቻ።";return}a[SUB[i][0]]=v}
  var s={id:id,name:nm,g:$("f_g").value,gr:$("f_gr").value,y:$("f_y").value,z:$("f_z").value,w:$("f_w").value,a:a};if(window.PH)s.ph=window.PH;
@@ -248,8 +259,8 @@ function mlSave(){var k=$("m_s").value+"_"+$("m_q").value,sx=SUB.filter(function
   s.ml=s.ml||{};s.ml[k]=m;s.a[sx[0]]=Math.round(tot/100*sx[2])});
  persist();draw();$("mm").textContent="✓ ማርክሊስቱ ተቀምጧል — ድምሩ በተማሪ ውጤት ውስጥ ተመዝግቧል"}
 function bulk(){var g=$("m_g").value.trim(),n=0;
- $("bk").value.split("\n").forEach(function(l){var p=l.split(/[,\t]/).map(function(x){return x.trim()});if(p.length<2||!p[0]||!p[1]||D.s.some(function(x){return x.id===p[0]}))return;
-  D.s.push({id:p[0],name:p[1].toUpperCase(),g:/^f/i.test(p[2]||"")?"Female":"Male",gr:g,y:$("f_y").value,z:$("f_z").value,w:$("f_w").value,a:{}});n++});
+ $("bk").value.split("\n").forEach(function(l){var p=l.split(/[,\t]/).map(function(x){return x.trim()});if(p.length<2||!p[1])return;var pid=(!p[0]||p[0]==="*")?newId():p[0];if(D.s.some(function(x){return x.id===pid}))return;
+  D.s.push({id:pid,name:p[1].toUpperCase(),g:/^f/i.test(p[2]||"")?"Female":"Male",gr:g,y:$("f_y").value,z:$("f_z").value,w:$("f_w").value,a:{}});n++});
  if(n){persist();draw();mlFill()}$("bk").value="";$("mm").textContent=n+" ተማሪ ተጨመረ"}
 mlFill();
 </script>
@@ -324,7 +335,7 @@ function rosterImport(f,one){if(!f)return;if($("ri_b").value&&!($("ri_s").value|
   for(var i=h+1;i<A.length;i++){var no=A[i][0],nv=String(A[i][cn]).replace(/\s+/g," ").trim();if(no===""||isNaN(+no)||!nv)continue;
    if(D.s.some(function(x){return x.gr===gr&&nm(x.name)===nm(nv)}))continue;var ex=(SFX&&bs&&bs!==gr)?D.s.filter(function(x){return x.gr===bs&&nm(x.name)===nm(nv)})[0]:null;if(ex){ex.gr=gr;mv++;if(BO)D.cb[gr]={id:BO.id,name:BO.name};continue}L.push({n:nv.toUpperCase(),g:/^f/i.test(String(A[i][cs]))?"Female":"Male",age:(ca>-1&&A[i][ca]!==""&&!isNaN(+A[i][ca]))?+A[i][ca]:null})}
   L.sort(function(a,b){return a.n.localeCompare(b.n)});
-  L.forEach(function(x){mx++;D.s.push({id:"NX"+yr.slice(-2)+"-"+String(mx).padStart(4,"0"),name:x.n,g:x.g,gr:gr,y:yr,z:$("f_z").value,w:$("f_w").value,age:x.age,a:{},ml:{}});add++});if(L.length&&BO)D.cb[gr]={id:BO.id,name:BO.name}});
+  L.forEach(function(x){mx++;D.s.push({id:newId(),name:x.n,g:x.g,gr:gr,y:yr,z:$("f_z").value,w:$("f_w").value,age:x.age,a:{},ml:{}});add++});if(L.length&&BO)D.cb[gr]={id:BO.id,name:BO.name}});
  persist();draw();mlFill();$("mm").textContent="✓ "+add+" ተማሪ ተጨመረ"+(mv?"፣ "+mv+" ነባር ተማሪ ከ «ዋና» ክፍል ወደ አዲሱ ክፍል ተዛውረዋል":"")+" (በስም A–Z ተደርድረው፣ ቁጥር ተሰጥቷቸዋል)"+(skip.length?" — ያልተነበቡ ሉሆች: "+skip.join(", "):"")}catch(e){$("mm").textContent="ፋይሉን ማንበብ አልተሳካም: "+((e&&e.message)||"")}};r.readAsArrayBuffer(f)}
 function isTransfer(ws){return XLSX.utils.sheet_to_json(ws,{header:1,defval:""}).slice(0,6).some(function(r){return r.some(function(c){return/transfer/i.test(String(c))})})}
 function rosterXl(only){var yr=String($("f_y").value||"2018"),all=only?[only]:Object.keys(clsAll()).sort(cmp),wb=XLSX.utils.book_new(),n0=0;
@@ -481,13 +492,15 @@ window.persist=function(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e)
 window.look=async function(){var inp=$("rq"),q=inp.value.trim(),m=$("rm");$("res").innerHTML="";m.style.color="";
  if(!q){m.textContent="የምዝገባ ቁጥርዎን ያስገቡ።";inp.focus();return}
  if(q.length<3||q.length>30||/[\/\s]/.test(q)){m.textContent="የምዝገባ ቁጥሩ ትክክል አይደለም። ባዶ ቦታ ሳይኖር ደግመው ይጻፉ።";return}
+ var fl=[];try{fl=JSON.parse(localStorage.getItem("nx_fl")||"[]").filter(function(t){return Date.now()-t<600000})}catch(e){}
+ if(fl.length>=10&&!auth.currentUser){m.textContent="ብዙ ጊዜ ሞክረዋል። ከ10 ደቂቃ በኋላ ደግመው ይሞክሩ።";return}
  m.style.color="var(--mu)";m.textContent="⏳ እየፈለገ...";
  try{var r=await Promise.all([getDoc(doc(db,"students",q)),getDoc(doc(db,"config","subjects")),getDoc(doc(db,"config","grades")),getDoc(doc(db,"config","directory"))]),sd=r[0];
   if(!sd.exists()&&q.toUpperCase()!==q){var d2=await getDoc(doc(db,"students",q.toUpperCase()));if(d2.exists())sd=d2}
   if(r[2].exists()){var cg=r[2].data();window.GSV=cg.gs;window.PMV=cg.pm;window.GVV=cg.gv;window.RCV=cg.rc;window.RVV=cg.rv}
   DIR=r[3].exists()?r[3].data().t:[];m.style.color="";
-  if(!sd.exists()){m.textContent="የምዝገባ ቁጥር «"+q+"» አልተገኘም። ቁጥሩን አረጋግጠው ደግመው ይሞክሩ፣ ወይም ትምህርት ቤቱን ይጠይቁ።";return}
-  var st=sd.data();m.textContent=(Object.keys(st.a||{}).length||Object.keys(st.ml||{}).length)?"":"ለ «"+st.name+"» ውጤት ገና አልታተመም።";
+  if(!sd.exists()){fl.push(Date.now());try{localStorage.setItem("nx_fl",JSON.stringify(fl))}catch(e){}m.textContent="የምዝገባ ቁጥር «"+q+"» አልተገኘም። ቁጥሩን አረጋግጠው ደግመው ይሞክሩ፣ ወይም ትምህርት ቤቱን ይጠይቁ።";return}
+  try{localStorage.removeItem("nx_fl")}catch(e){}var st=sd.data();m.textContent=(Object.keys(st.a||{}).length||Object.keys(st.ml||{}).length)?"":"ለ «"+st.name+"» ውጤት ገና አልታተመም።";
   var keep=SUB;if(r[1].exists())SUB=toSub(r[1].data());window.SUBV=SUB;
   try{$("res").innerHTML=card(st)+cbox();window.CBS=st;loadCbl();loadMat();loadNtS();$("res").scrollIntoView({behavior:"smooth"})}finally{SUB=keep}}
  catch(e){m.style.color="";m.textContent=(!navigator.onLine||(e&&e.code==="unavailable"))?"ኢንተርኔት የለም። ግንኙነትዎን አረጋግጠው ደግመው ይሞክሩ።":"ችግር ተፈጥሯል፤ ደግመው ይሞክሩ። ("+((e&&e.code)||"")+")"}};
