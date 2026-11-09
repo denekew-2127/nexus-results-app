@@ -101,7 +101,8 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
     <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_c" style="width:auto" onchange="setRv()"> Class Rank (በክፍል ደረጃ)</label>
     <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_b" style="width:auto" onchange="setRv()"> Branch Rank (በቅርንጫፍ ደረጃ)</label>
     <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_s" style="width:auto" onchange="setRv()"> School Rank (በትምህርት ቤት ደረጃ)</label>
-    <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_p" style="width:auto" onchange="setRv()"> Percentile</label></div>
+    <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_p" style="width:auto" onchange="setRv()"> Percentile</label>
+    <label style="display:block;margin:6px 0"><input type="checkbox" id="rv_t" style="width:auto" onchange="setRv()"> Status (Passed / Failed)</label></div>
    <label>Report card የሚያካትተው ውጤት (ለምሳሌ CA ብቻ)</label><div><button class="btn g" onclick="rcPre('q1')">1ኛ ሩብ (35)</button> <button class="btn g" onclick="rcPre('all')">ሁሉም (100)</button></div><div id="rcb"></div><div id="rct" class="msg" style="color:var(--mu)"></div><button class="btn" onclick="setRc()">Report card ቅንብር አስቀምጥ</button>
    <label style="margin-top:12px">ክፍሎች</label><div class="tw"><table id="cl"></table></div>
    <div class="grid"><div><label>አዲስ ክፍል</label><input id="cn" placeholder="Grade 9A"></div><div style="align-self:end"><button class="btn" onclick="addCl()">ክፍል ጨምር</button></div></div><div id="cm" class="msg"></div>
@@ -153,7 +154,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v14</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v15</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
@@ -161,7 +162,7 @@ function load(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){D=null}
  if(!D||!D.s){D={pin:"1234",s:[{id:"0082347",name:"MOHAMMED ABDELLA SEMAN",g:"Male",gr:"Grade 8",y:"2018",z:"Gurage",w:"WOLKITE",a:{en:82,ci:88,ma:75,ss:90,gs:85,am:83}}],v:2}}
  norm()}
 function norm(){if(D.v!==2){var OM={en:60,ci:60,ma:40,ss:60,gs:60,am:60};D.s.forEach(function(x){for(var k in OM){if(x.a[k]!=null)x.a[k]=Math.round(x.a[k]/OM[k]*100)}});D.v=2}
- if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub;if(!D.cl)D.cl=[];if(!D.cb)D.cb={};if(!D.gs)D.gs="90:A,80:B,70:C,60:D,50:E,0:F";if(D.pm==null)D.pm=50;if(D.gv==null)D.gv=true;if(D.rv==null)D.rv={c:true,b:true,s:true,p:true}}
+ if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub;if(!D.cl)D.cl=[];if(!D.cb)D.cb={};if(!D.gs)D.gs="90:A,80:B,70:C,60:D,50:E,0:F";if(D.pm==null)D.pm=50;if(D.gv==null)D.gv=true;if(D.rv==null)D.rv={c:true,b:true,s:true,p:true,t:true}}
 function persist(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
 load();
 function $(i){return document.getElementById(i)}
@@ -177,7 +178,7 @@ function look(){var q=$("rq").value.trim(),s=D.s.filter(function(x){return x.id=
 function card(s){var c=calc(s),ok=c.avg>=PM();
  return '<div class="card"><h2 style="text-align:center">Student Profile</h2><p style="text-align:center;font-weight:700;margin:6px 0 12px">'+esc(s.name)+'</p><div class="grid">'+
  [["Registration Number",s.id],["Nationality","Ethiopian"],["Gender",s.g],["Zone",s.z],["Grade",s.gr],["Woreda",s.w],["Academic Year",s.y],["School","NEXUS"]].map(function(p){return '<div><span style="font-size:12px;color:var(--mu)">'+p[0]+'</span><br><b>'+esc(p[1])+'</b></div>'}).join("")+
- '</div></div><div class="card"><h2>Result Summary</h2><div class="sum"><div><span>Total Score</span><b>'+r2(c.total)+'</b></div><div><span>Mark</span><b>'+c.mark+'</b></div>'+(RV("p")?'<div><span>Percentile</span><b>'+r2(pct(s))+'</b></div>':'')+'<div><span>Average</span><b>'+r2(c.avg)+'</b></div><div><span>Status</span><span class="badge '+(ok?"p":"f")+'">'+(ok?"✓ Passed":"Failed")+'</span></div></div></div>'+
+ '</div></div><div class="card"><h2>Result Summary</h2><div class="sum"><div><span>Total Score</span><b>'+r2(c.total)+'</b></div><div><span>Mark</span><b>'+c.mark+'</b></div>'+(RV("p")?'<div><span>Percentile</span><b>'+r2(pct(s))+'</b></div>':'')+'<div><span>Average</span><b>'+r2(c.avg)+'</b></div>'+(RV("t")?'<div><span>Status</span><span class="badge '+(ok?"p":"f")+'">'+(ok?"✓ Passed":"Failed")+'</span></div>':'')+'</div></div>'+
  '<div class="card"><h2>Subject Wise Results</h2><div class="tw"><table><tr><th>Subject</th><th>Answered</th><th>Score / 100</th></tr>'+
  c.rows.map(function(r){return '<tr><td>'+r.n+'</td><td>'+r.a+' / '+r.o+'</td><td>'+r2(r.sc)+' / 100</td></tr>'}).join("")+'</table></div></div>'}
 function login(){if($("pin").value===D.pin){$("lg").classList.add("hide");$("tp").classList.remove("hide");$("lm").textContent="";draw()}else $("lm").textContent="PIN ትክክል አይደለም።"}
@@ -427,7 +428,7 @@ mlFill();
 function RCK(){var v=window.RCV!=null?window.RCV:D.rc;return v&&v.length?v:null}
 function GV(){var v=window.GVV!=null?window.GVV:D.gv;return v!==false}
 function RV(k){var v=window.RVV!=null?window.RVV:D.rv;return!v||v[k]!==false}
-function setRv(){D.rv={c:$("rv_c").checked,b:$("rv_b").checked,s:$("rv_s").checked,p:$("rv_p").checked};persist();$("cm").textContent="✓ የደረጃ/Percentile ማሳያ ቅንብር ተቀምጧል — ተማሪዎች ወዲያው ያዩታል"}
+function setRv(){D.rv={c:$("rv_c").checked,b:$("rv_b").checked,s:$("rv_s").checked,p:$("rv_p").checked,t:$("rv_t").checked};persist();$("cm").textContent="✓ የደረጃ/Percentile/Status ማሳያ ቅንብር ተቀምጧል — ተማሪዎች ወዲያው ያዩታል"}
 function rcComps(){var C=MC.concat([["fe","Final",25]]),k=RCK();return k?C.filter(function(c){return k.indexOf(c[0])>-1}):C}
 function rcHtml(s,S){
  var C=rcComps(),mx=C.reduce(function(p,c){return p+c[2]},0),g=GV();
@@ -481,7 +482,7 @@ async function syncAll(){var ops=[],nl={};
  rk2(D.s.slice(),"ra","na");var bg={};D.s.forEach(function(s){if(s.br)(bg[s.br]=bg[s.br]||[]).push(s);else{delete s.rb;delete s.nb}});Object.keys(bg).forEach(function(k){rk2(bg[k],"rb","nb")});
  D.s.forEach(function(s){s.pc=pct0(s);var j=JSON.stringify(s);if(last[s.id]!==j){nl[s.id]=j;ops.push(function(b){b.set(doc(db,"students",s.id),s)})}});
  ids.forEach(function(i){if(!D.s.some(function(x){return x.id===i}))ops.push(function(b){b.delete(doc(db,"students",i))})});
- ops.push(function(b){b.set(doc(db,"config","grades"),{gs:D.gs,pm:D.pm,gv:D.gv!==false,rc:D.rc||[],rv:D.rv||{c:true,b:true,s:true,p:true}})});
+ ops.push(function(b){b.set(doc(db,"config","grades"),{gs:D.gs,pm:D.pm,gv:D.gv!==false,rc:D.rc||[],rv:D.rv||{c:true,b:true,s:true,p:true,t:true}})});
  ops.push(function(b){b.set(doc(db,"config","classes"),{list:D.cl||[],map:D.cb||{}})});
  ops.push(function(b){b.set(doc(db,"config","subjects"),{sub:D.sub.map(function(x){return{k:x[0],n:x[1],m:x[2]}})})});
  for(var i=0;i<ops.length;i+=400){var b=writeBatch(db);ops.slice(i,i+400).forEach(function(o){o(b)});await b.commit()}
@@ -782,7 +783,7 @@ $("tl").addEventListener("click",async function(e){var id=e.target.getAttribute(
 var rd5=rdAd;rdAd=function(){rd5();$("pm").value=D.pm;$("gs").value=D.gs};
 
 function semAvgPct(s,sub,sem,m){var t=0;for(var k in m)t+=m[k];var o=sem==="1"?"2":"1",om=s.ml&&s.ml[sub+"_"+o];if(!om)return t;var u=0;for(var k2 in om)u+=om[k2];return(t+u)/2}
-var rd6=rdAd;rdAd=function(){rd6();$("gv").checked=D.gv!==false;var rv0=D.rv||{};["c","b","s","p"].forEach(function(k){$("rv_"+k).checked=rv0[k]!==false});rcDraw()};
+var rd6=rdAd;rdAd=function(){rd6();$("gv").checked=D.gv!==false;var rv0=D.rv||{};["c","b","s","p","t"].forEach(function(k){$("rv_"+k).checked=rv0[k]!==false});rcDraw()};
 
 window.rosterOne=function(){var g=$("m_g").value.trim();if(!isAdm&&!(ME&&ME.role==="homeroom"&&(ME.cls||[]).indexOf(g)>-1)){$("mm").textContent="ለዚህ ክፍል Homeroom መምህር ወይም Admin ብቻ።";return}rosterXl(g)};
 var rd7=rdAd;rdAd=function(){rd7();$("cb_all").innerHTML=BR.map(function(b){return'<option value="'+b.id+'">'+esc(b.name)+'</option>'}).join("")};
