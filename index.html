@@ -48,7 +48,14 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
 #ced{position:fixed;inset:0;z-index:998;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:14px}#ced.hide{display:none}
 #ced .bx{background:var(--cd,#fff);color:var(--tx,#111);border:1px solid var(--bd);border-radius:12px;max-width:420px;width:100%;max-height:85vh;overflow:auto;padding:14px}
 #ced label{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:14px}#ced input{width:auto;margin:0}
-</style></head><body>
+</style><script>
+/* error banner: shows any unexpected JS error on screen so it can be reported */
+(function(){function t(m){function put(){var d=document.getElementById("errbar");if(!d){d=document.createElement("div");d.id="errbar";d.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:#b91c1c;color:#fff;padding:10px 12px;border-radius:10px;font:13px system-ui;word-break:break-word;box-shadow:0 4px 18px #0006";document.body.appendChild(d)}d.textContent="⚠ "+m+"  (ለመዝጋት ይንኩ)";d.onclick=function(){d.remove()}}
+ if(document.body)put();else document.addEventListener("DOMContentLoaded",put)}
+ window.addEventListener("error",function(e){if(e&&e.target&&e.target!==window)return;t((e.message||"error")+(e.lineno?" [line "+e.lineno+"]":""))});
+ window.addEventListener("unhandledrejection",function(e){var r=e.reason;t("Promise: "+((r&&(r.code||r.message))||r))})})();
+</script>
+</head><body>
 <header><img src="logo.png" alt="" style="width:64px;height:64px;border-radius:50%;background:#fff;margin-bottom:6px" onerror="this.style.display='none'"><h1>Nexus Academy</h1><p>የተማሪ ውጤት ሲስተም</p></header>
 <div class="tabs"><button id="t1" class="on" onclick="tab(1)">🎓 ተማሪ</button><button id="t2" onclick="tab(2)">👩‍🏫 መምህር</button></div>
 <main>
@@ -154,15 +161,16 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v15</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v17</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
 function load(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){D=null}
  if(!D||!D.s){D={pin:"1234",s:[{id:"0082347",name:"MOHAMMED ABDELLA SEMAN",g:"Male",gr:"Grade 8",y:"2018",z:"Gurage",w:"WOLKITE",a:{en:82,ci:88,ma:75,ss:90,gs:85,am:83}}],v:2}}
  norm()}
+function sortS(){if(!D||!D.s)return;D.s.sort(function(a,b){return cmp(String(a.gr||""),String(b.gr||""))||String(a.name||"").trim().localeCompare(String(b.name||"").trim(),undefined,{sensitivity:"base"})})}
 function norm(){if(D.v!==2){var OM={en:60,ci:60,ma:40,ss:60,gs:60,am:60};D.s.forEach(function(x){for(var k in OM){if(x.a[k]!=null)x.a[k]=Math.round(x.a[k]/OM[k]*100)}});D.v=2}
- if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub;if(!D.cl)D.cl=[];if(!D.cb)D.cb={};if(!D.gs)D.gs="90:A,80:B,70:C,60:D,50:E,0:F";if(D.pm==null)D.pm=50;if(D.gv==null)D.gv=true;if(D.rv==null)D.rv={c:true,b:true,s:true,p:true,t:true}}
+ if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub;if(!D.cl)D.cl=[];if(!D.cb)D.cb={};if(!D.gs)D.gs="90:A,80:B,70:C,60:D,50:E,0:F";if(D.pm==null)D.pm=50;if(D.gv==null)D.gv=true;if(D.rv==null)D.rv={c:true,b:true,s:true,p:true,t:true};sortS()}
 function persist(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
 load();
 function $(i){return document.getElementById(i)}
@@ -488,7 +496,7 @@ async function syncAll(){var ops=[],nl={};
  for(var i=0;i<ops.length;i+=400){var b=writeBatch(db);ops.slice(i,i+400).forEach(function(o){o(b)});await b.commit()}
  Object.keys(nl).forEach(function(k){last[k]=nl[k]});ids.forEach(function(i){if(!D.s.some(function(x){return x.id===i}))delete last[i]});
  ids=new Set(D.s.map(function(x){return x.id}))}
-window.persist=function(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}
+window.persist=function(){sortS();try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}
  if(auth.currentUser&&isAdm){clearTimeout(_t);_t=setTimeout(function(){syncAll().catch(function(e){alert("ዳታቤዝ ማስቀመጥ አልተሳካም: "+e.code)})},600)}};
 window.look=async function(){var inp=$("rq"),q=inp.value.trim(),m=$("rm");$("res").innerHTML="";m.style.color="";
  if(!q){m.textContent="የምዝገባ ቁጥርዎን ያስገቡ።";inp.focus();return}
