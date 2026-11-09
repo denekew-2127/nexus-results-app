@@ -161,14 +161,14 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v17</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v18</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
 function load(){try{D=JSON.parse(localStorage.getItem(K))}catch(e){D=null}
  if(!D||!D.s){D={pin:"1234",s:[{id:"0082347",name:"MOHAMMED ABDELLA SEMAN",g:"Male",gr:"Grade 8",y:"2018",z:"Gurage",w:"WOLKITE",a:{en:82,ci:88,ma:75,ss:90,gs:85,am:83}}],v:2}}
  norm()}
-function sortS(){if(!D||!D.s)return;D.s.sort(function(a,b){return cmp(String(a.gr||""),String(b.gr||""))||String(a.name||"").trim().localeCompare(String(b.name||"").trim(),undefined,{sensitivity:"base"})})}
+function sortS(){try{if(!D||!D.s)return;D.s.sort(function(a,b){return String(a.gr||"").localeCompare(String(b.gr||""),undefined,{numeric:true})||String(a.name||"").trim().localeCompare(String(b.name||"").trim(),undefined,{sensitivity:"base"})})}catch(e){}}
 function norm(){if(D.v!==2){var OM={en:60,ci:60,ma:40,ss:60,gs:60,am:60};D.s.forEach(function(x){for(var k in OM){if(x.a[k]!=null)x.a[k]=Math.round(x.a[k]/OM[k]*100)}});D.v=2}
  if(!D.sub||!D.sub.length)D.sub=DEF.map(function(x){return x.slice()});SUB=D.sub;if(!D.cl)D.cl=[];if(!D.cb)D.cb={};if(!D.gs)D.gs="90:A,80:B,70:C,60:D,50:E,0:F";if(D.pm==null)D.pm=50;if(D.gv==null)D.gv=true;if(D.rv==null)D.rv={c:true,b:true,s:true,p:true,t:true};sortS()}
 function persist(){try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}}
