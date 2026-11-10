@@ -49,11 +49,14 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
 #ced .bx{background:var(--cd,#fff);color:var(--tx,#111);border:1px solid var(--bd);border-radius:12px;max-width:420px;width:100%;max-height:85vh;overflow:auto;padding:14px}
 #ced label{display:flex;align-items:center;gap:8px;margin:6px 0;font-size:14px}#ced input{width:auto;margin:0}
 </style><script>
-/* error banner: shows any unexpected JS error on screen so it can be reported */
-(function(){function t(m){function put(){var d=document.getElementById("errbar");if(!d){d=document.createElement("div");d.id="errbar";d.style.cssText="position:fixed;left:8px;right:8px;bottom:8px;z-index:99999;background:#b91c1c;color:#fff;padding:10px 12px;border-radius:10px;font:13px system-ui;word-break:break-word;box-shadow:0 4px 18px #0006";document.body.appendChild(d)}d.textContent="⚠ "+m+"  (ለመዝጋት ይንኩ)";d.onclick=function(){d.remove()}}
+/* on-screen error banner + offline notice */
+(function(){function bar(id,css,txt,click){function put(){var d=document.getElementById(id);if(!d){d=document.createElement("div");d.id=id;d.style.cssText="position:fixed;left:8px;right:8px;z-index:99999;padding:10px 12px;border-radius:10px;font:13px system-ui;word-break:break-word;box-shadow:0 4px 18px #0006;"+css;document.body.appendChild(d)}d.textContent=txt;if(click)d.onclick=function(){d.remove()}}
  if(document.body)put();else document.addEventListener("DOMContentLoaded",put)}
- window.addEventListener("error",function(e){if(e&&e.target&&e.target!==window)return;t((e.message||"error")+(e.lineno?" [line "+e.lineno+"]":""))});
- window.addEventListener("unhandledrejection",function(e){var r=e.reason;t("Promise: "+((r&&(r.code||r.message))||r))})})();
+ function off(){var d=document.getElementById("offbar");if(navigator.onLine===false)bar("offbar","top:8px;background:#f5b301;color:#1e293b;font-weight:700;text-align:center","📡 ኢንተርኔት የለም — ውጤት ለማየት ኢንተርኔት ያስፈልጋል");else if(d)d.remove()}
+ window.addEventListener("offline",off);window.addEventListener("online",off);off();
+ function err(m){if(navigator.onLine===false)return;bar("errbar","bottom:8px;background:#b91c1c;color:#fff","⚠ "+m+"  (ለመዝጋት ይንኩ)",1)}
+ window.addEventListener("error",function(e){if(e&&e.target&&e.target!==window)return;var f=(e.filename||"").split("/").pop();err((e.message||"error")+(e.lineno?" ["+(f&&f!==location.pathname.split("/").pop()?f+":":"")+"line "+e.lineno+"]":""))});
+ window.addEventListener("unhandledrejection",function(e){var r=e.reason;err("Promise: "+((r&&(r.code||r.message))||r))})})();
 </script>
 </head><body>
 <header><img src="logo.png" alt="" style="width:64px;height:64px;border-radius:50%;background:#fff;margin-bottom:6px" onerror="this.style.display='none'"><h1>Nexus Academy</h1><p>የተማሪ ውጤት ሲስተም</p></header>
@@ -161,7 +164,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v18</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v19</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
@@ -502,6 +505,7 @@ window.look=async function(){var inp=$("rq"),q=inp.value.trim(),m=$("rm");$("res
  if(!q){m.textContent="የምዝገባ ቁጥርዎን ያስገቡ።";inp.focus();return}
  if(q.length<3||q.length>30||/[\/\s]/.test(q)){m.textContent="የምዝገባ ቁጥሩ ትክክል አይደለም። ባዶ ቦታ ሳይኖር ደግመው ይጻፉ።";return}
  var fl=[];try{fl=JSON.parse(localStorage.getItem("nx_fl")||"[]").filter(function(t){return Date.now()-t<600000})}catch(e){}
+ if(navigator.onLine===false){m.textContent="ኢንተርኔት የለም። ከተገናኙ በኋላ ደግመው ይሞክሩ።";return}
  if(fl.length>=10&&!auth.currentUser){m.textContent="ብዙ ጊዜ ሞክረዋል። ከ10 ደቂቃ በኋላ ደግመው ይሞክሩ።";return}
  m.style.color="var(--mu)";m.textContent="⏳ እየፈለገ...";
  try{var r=await Promise.all([getDoc(doc(db,"students",q)),getDoc(doc(db,"config","subjects")),getDoc(doc(db,"config","grades")),getDoc(doc(db,"config","directory"))]),sd=r[0];
