@@ -169,7 +169,7 @@ body.prp *{visibility:hidden}body.prp #rp,body.prp #rp *{visibility:visible}body
  </div>
 </section>
 </main>
-<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v20</small></footer>
+<footer><div class="dv"><img src="developer.jpg" alt="Denekew Bamlaku" onerror="this.parentNode.style.display='none'"></div><b>Developed by Denekew Bamlaku</b> · DB technologies<br>☎ 0925891806 · ✉ Denekewbamlaku2127@gmail.com<small style="display:block;margin-top:6px">© 2026 Nexus Academy. All rights reserved. · v21</small></footer>
 <script>
 var SUB,DEF=[["en","English",100],["ci","Citizenship",100],["ma","Mathematics",100],["ss","Social Studies",100],["gs","General Science",100],["am","Amharic as Mother Tongue",100]];
 var K="nexus_results_v1",D;
@@ -204,7 +204,9 @@ function chPin(){var p=$("np").value.trim();if(p.length<4){alert("ቢያንስ 4
 function renderSubs(){var old={};SUB.forEach(function(x){var e=$("s_"+x[0]);if(e)old[x[0]]=e.value});
  $("subs").innerHTML=SUB.map(function(x){return '<div><label>'+esc(x[1])+' (/'+x[2]+')</label><input type="number" min="0" max="'+x[2]+'" id="s_'+x[0]+'"></div>'}).join("");
  SUB.forEach(function(x){if(old[x[0]]!=null)$("s_"+x[0]).value=old[x[0]]});
- $("sl").innerHTML=SUB.map(function(x,i){return '<tr><td>'+esc(x[1])+'</td><td>/ '+x[2]+'</td><td><button class="btn r" style="margin:0;padding:4px 8px" data-x="'+i+'">ሰርዝ</button></td></tr>'}).join("")}
+ $("sl").innerHTML=SUB.map(function(x,i){return '<tr><td>'+(i+1)+'. '+esc(x[1])+'</td><td>/ '+x[2]+'</td><td style="white-space:nowrap"><button class="btn g" style="margin:0 3px 0 0;padding:4px 10px" data-u="'+i+'">↑</button><button class="btn g" style="margin:0 8px 0 0;padding:4px 10px" data-d="'+i+'">↓</button><button class="btn r" style="margin:0;padding:4px 8px" data-x="'+i+'">ሰርዝ</button></td></tr>'}).join("")}
+function mvSub(i,d){i=+i;var j=i+d;if(j<0||j>=SUB.length)return;var t=SUB[i];SUB[i]=SUB[j];SUB[j]=t;persist();renderSubs();draw();mlFill();$("sm").textContent="✓ የትምህርቶች ቅደም ተከተል ተቀምጧል — በ Marklist፣ በ Excel፣ በሪፖርት ካርድና በተማሪ ውጤት ገጽ ይታያል"}
+$("sl").addEventListener("click",function(e){var u=e.target.getAttribute&&e.target.getAttribute("data-u"),d=e.target.getAttribute&&e.target.getAttribute("data-d");if(u!=null)mvSub(u,-1);else if(d!=null)mvSub(d,1)});
 function addSub(){var n=$("ns").value.trim(),m=+$("nm").value||100;
  if(!n){$("sm").textContent="የትምህርቱን ስም ያስገቡ።";return}
  if(m<1||m>1000){$("sm").textContent="ከፍተኛ ውጤት ከ1 እስከ 1000።";return}
